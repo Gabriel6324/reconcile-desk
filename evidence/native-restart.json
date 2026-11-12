@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "as_of": "2026-11-10",
+  "scope": "native PostgreSQL process recovery and API restart",
+  "baseline": {
+    "run_id": "004f2388-7710-4691-9464-c12c2b1d484e",
+    "result_hash": "f67f622c4d9dd6a615ce1e6ecb55783ccdfb819842d0346d70d92998053a0b59",
+    "export_sha256": "c0c71cc976419bf6e70df1c77611d9932399c187428f82082c47f02655e7843a"
+  },
+  "checks": [
+    "same saved run result hash",
+    "same persisted export SHA256"
+  ],
+  "docker_recreate": "NOT_RUN"
+}

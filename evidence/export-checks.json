@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "source": "browser-export.xlsx",
+  "sheet_count": 6,
+  "source_rows": 16,
+  "result_groups": 9,
+  "large_decimal_difference": "0.01",
+  "formula_cells": 0,
+  "automatic_hyperlinks": 0
+}

@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "checked_on": "2026-11-13",
+  "archive": "ReconcileDesk-Windows.zip",
+  "bytes": 77819293,
+  "sha256": "6c1357fa7ffd89ad057960e911176f1941353097050520141536c936c92c50dc",
+  "manifest_files": 4939,
+  "zip_crc_and_all_file_hashes": "PASS",
+  "source_launcher_matches_archive": "PASS",
+  "clean_package_without_workspace_data": "PASS",
+  "first_start_from_final_zip_in_chinese_path": "PASS",
+  "browser": "browser-checks.json",
+  "browser_checks": 9,
+  "export_exact_decimals_and_no_formulas": "PASS",
+  "lifecycle": "lifecycle.json",
+  "tested_platform": "Current Windows x64 host, Microsoft Edge",
+  "runtime": "Bundled Python 3.12.14 / PostgreSQL 17.11 / VC runtime / compiled React; no Docker required",
+  "not_verified": [
+    "Separate clean Windows virtual machine or other computers",
+    "Real model endpoint",
+    "Docker runtime"
+  ],
+  "model_status": "User accepted no endpoint; manual mapping flow is available offline"
+}

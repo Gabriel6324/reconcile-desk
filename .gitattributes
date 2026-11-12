@@ -1,0 +1,2 @@
+# Preserve exact source bytes so the recorded verification hashes survive checkout.
+* -text

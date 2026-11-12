@@ -1,0 +1,44 @@
+{
+  "snapshot": {
+    "runs": [
+      {
+        "id": "bf8edcd9-893b-4675-a983-e8ee185bb977",
+        "state": "completed",
+        "mapping_id": "c4895d25-3959-4044-b457-b6735fa19467",
+        "revision": 1,
+        "left_import_id": "a6e3fed4-c94b-4576-b867-81cc45eeb2ac",
+        "right_import_id": "673237f0-776f-4856-8758-43da87cd2e1b",
+        "created_at": "2026-11-13T02:23:38.962664+08:00",
+        "summary": {
+          "counts": {
+            "equal": 2,
+            "changed": 2,
+            "blank_key": 1,
+            "left_only": 1,
+            "right_only": 1,
+            "duplicate_key": 1,
+            "invalid_value": 1
+          },
+          "decision": "needs_review",
+          "left_rows": 9,
+          "equal_rate": 0.25,
+          "input_rows": 16,
+          "key_groups": 8,
+          "right_rows": 7,
+          "completeness": "contains_unresolved_records",
+          "total_groups": 9,
+          "blank_key_rows": 1,
+          "unresolved_rows": 6
+        }
+      }
+    ],
+    "export_sha256": "c0c71cc976419bf6e70df1c77611d9932399c187428f82082c47f02655e7843a"
+  },
+  "initial_url": "http://127.0.0.1:8080",
+  "status": "PASS",
+  "active_drive": "Z:",
+  "normal_stop_and_alias_release": "PASS",
+  "move_restart_history_and_export": "PASS",
+  "duplicate_start_reuses_existing_ready_instance": "PASS",
+  "checked_on": "2026-11-13"
+}

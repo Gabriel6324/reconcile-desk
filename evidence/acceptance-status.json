@@ -1,0 +1,714 @@
+{
+  "as_of": "2026-11-13",
+  "full_release": "PENDING",
+  "cases": [
+    {
+      "id": "T01",
+      "case": "exact_equal_and_changed_values",
+      "expect": "independent_expected_groups_and_cells_match",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T02",
+      "case": "left_only_and_right_only",
+      "expect": "correct_side_and_original_row_references",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T03",
+      "case": "duplicate_key_on_either_or_both_sides",
+      "expect": "all_rows_quarantined_in_one_key_group_no_arbitrary_pairing",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T04",
+      "case": "blank_key_null_empty_and_whitespace",
+      "expect": "separate_unresolved_rows_and_no_silent_drop",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T05",
+      "case": "keys_00123_123_space123",
+      "expect": "distinct_by_default_normalization_explicitly_changes_uniqueness",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T06",
+      "case": "9007199254740993.01_vs_9007199254740993.02",
+      "expect": "changed_exact_0.01_difference_no_float_loss",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T07",
+      "case": "decimal_1.0_vs_1.00_and_empty_vs_zero",
+      "expect": "first_equal_second_never_equal",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T08",
+      "case": "unsupported_decimal_symbols_or_exponents",
+      "expect": "invalid_value_group_no_zero_coercion",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T09",
+      "case": "multiline_CSV_and_XLSX_cell_provenance",
+      "expect": "correct_logical_records_and_coordinates",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T10",
+      "case": "mapping_edit_after_confirmation",
+      "expect": "old_confirmation_invalidated_run_rejected_until_reconfirmed",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T11",
+      "case": "concurrent_mapping_save",
+      "expect": "stale_revision_returns_409",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T12",
+      "case": "duplicate_run_request",
+      "expect": "same_idempotency_key_same_payload_same_run",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T13",
+      "case": "model_timeout_invalid_JSON_or_hallucinated_column",
+      "expect": "explicit_failure_manual_flow_preserved_no_fake_model_success",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T14",
+      "case": "header_containing_prompt_injection",
+      "expect": "no_tool_execution_or_secret_disclosure_schema_guard_retained",
+      "status": "NOT_RUN",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Related behavior may have component coverage; the entire planned fault-injection/acceptance scenario has not been demonstrated."
+    },
+    {
+      "id": "T15",
+      "case": "formula_or_external_link_in_workbook",
+      "expect": "bounded_rejection_no_evaluation_or_network_fetch",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T16",
+      "case": "export_cells_starting_equals_plus_minus_at_or_tab",
+      "expect": "literal_cells_no_unexpected_formula_or_external_hyperlink_nodes",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T17",
+      "case": "oversize_zip_expansion_rows_columns_or_cell_text",
+      "expect": "bounded_failure_no_partial_completed_import",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T18",
+      "case": "fake_extension_duplicate_header_and_ragged_csv",
+      "expect": "actionable_validation_error",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T19",
+      "case": "all_input_row_partition",
+      "expect": "each_input_row_covered_once_and_unresolved_counts_separate",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T20",
+      "case": "export_vs_persisted_results",
+      "expect": "all_findings_values_source_refs_and_precision_identical",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T21",
+      "case": "browser_upload_map_confirm_run_filter_expand_export_reload",
+      "expect": "complete_actual_browser_flow_and_download_content_match",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G4"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T22",
+      "case": "real_model_call_and_user_correction",
+      "expect": "traceable_proposal_corrected_confirmation_and_real_result",
+      "status": "BLOCKED",
+      "required_for_v1": true,
+      "gates": [
+        "G3"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Real model endpoint or Docker runtime unavailable."
+    },
+    {
+      "id": "T23",
+      "case": "backend_interrupt_during_run",
+      "expect": "interrupted_after_restart_no_false_completion_or_paid_replay",
+      "status": "NOT_RUN",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Related behavior may have component coverage; the entire planned fault-injection/acceptance scenario has not been demonstrated."
+    },
+    {
+      "id": "T24",
+      "case": "compose_recreate_without_volume_deletion",
+      "expect": "same_sources_history_results_and_export_hashes",
+      "status": "BLOCKED",
+      "required_for_v1": true,
+      "gates": [
+        "G6"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Real model endpoint or Docker runtime unavailable."
+    },
+    {
+      "id": "T25",
+      "case": "ui_empty_error_loading_narrow_screen_and_keyboard",
+      "expect": "usable_states_without_dead_controls_or_clipped_primary_actions",
+      "status": "NOT_RUN",
+      "required_for_v1": true,
+      "gates": [
+        "G4"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Related behavior may have component coverage; the entire planned fault-injection/acceptance scenario has not been demonstrated."
+    },
+    {
+      "id": "T26",
+      "case": "decimal_context_38_digit_cross_scale",
+      "expect": "精度64无舍入；38位近似数normalize仍不相等；大整数减12位小数、负数和进位均精确",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T27",
+      "case": "xlsx_scientific_and_type_matrix",
+      "expect": "原生1E-12精确解析；超界指数拒绝；日期/布尔不静默变数字",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T28",
+      "case": "format_empty_value_and_sparse_rows",
+      "expect": "CSV无NULL猜测；XLSX缺失与显式空串区分；表头空表、空白和稀疏行统计确定",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T29",
+      "case": "blank_key_persistence_coverage",
+      "expect": "保存/重启/导出后空键和重复组所有源行恰好覆盖一次",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2",
+        "G6"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T30",
+      "case": "late_model_suggestion_and_duplicate_request",
+      "expect": "r1建议不能覆盖r2；重发同幂等键不会再次调用模型",
+      "status": "NOT_RUN",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Related behavior may have component coverage; the entire planned fault-injection/acceptance scenario has not been demonstrated."
+    },
+    {
+      "id": "T31",
+      "case": "confirm_run_race",
+      "expect": "并发保存/确认/启动只能冻结一个合法已确认版本，旧运行不受后续编辑影响",
+      "status": "NOT_RUN",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Related behavior may have component coverage; the entire planned fault-injection/acceptance scenario has not been demonstrated."
+    },
+    {
+      "id": "T32",
+      "case": "hard_timeout_late_commit",
+      "expect": "超时后子进程退出，无迟到completed；下个操作不与旧计算重叠",
+      "status": "NOT_RUN",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Related behavior may have component coverage; the entire planned fault-injection/acceptance scenario has not been demonstrated."
+    },
+    {
+      "id": "T33",
+      "case": "accepted_upload_request_closed",
+      "expect": "202后关闭请求、刷新浏览器仍可解析持久载荷及找回operation",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2",
+        "G4"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T34",
+      "case": "operation_crash_retry",
+      "expect": "所有running恢复为interrupted；新键显式重试，旧键不重放；付费结果未知不声称免费",
+      "status": "NOT_RUN",
+      "required_for_v1": true,
+      "gates": [
+        "G2",
+        "G6"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Related behavior may have component coverage; the entire planned fault-injection/acceptance scenario has not been demonstrated."
+    },
+    {
+      "id": "T35",
+      "case": "export_concurrent_prepare_and_equal_rows",
+      "expect": "只对completed准备；并发请求同一制品hash；包含equal和全部来源值",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T36",
+      "case": "unicode_database_and_export_boundary",
+      "expect": "NUL/非法XML字符导入即拒绝；Tab/LF/CR与补充平面字符保留",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T37",
+      "case": "canonical_hash_reimport",
+      "expect": "相同文件新数据库ID/读取顺序仍相同结果hash；语义映射变化则不同",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T38",
+      "case": "mixed_changed_and_invalid_cells",
+      "expect": "invalid组保留其他已知差异；不得显示全部一致",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T39",
+      "case": "final_container_real_model_flow",
+      "expect": "模型、映射确认、核对、下载在最终镜像同一浏览器流程通过",
+      "status": "BLOCKED",
+      "required_for_v1": true,
+      "gates": [
+        "G3",
+        "G5"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Real model endpoint or Docker runtime unavailable."
+    },
+    {
+      "id": "T40",
+      "case": "final_source_change_invalidates_evidence",
+      "expect": "前后端变更使相关PASS过期，必须重建并重验受影响门槛",
+      "status": "NOT_RUN",
+      "required_for_v1": true,
+      "gates": [
+        "G1"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Related behavior may have component coverage; the entire planned fault-injection/acceptance scenario has not been demonstrated."
+    },
+    {
+      "id": "T41",
+      "case": "proxy_upload_and_memory_limits",
+      "expect": "1MiB以上合法文件成功；超过10MiB失败；chunked上传/zip实际膨胀/共享字符串均有界",
+      "status": "BLOCKED",
+      "required_for_v1": true,
+      "gates": [
+        "G5"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Real model endpoint or Docker runtime unavailable."
+    },
+    {
+      "id": "T42",
+      "case": "local_origin_and_host_validation",
+      "expect": "跨站multipart/JSON和恶意Host拒绝；合法本地浏览器流程通过",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G4"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T43",
+      "case": "database_migration_restart_recovery",
+      "expect": "新库迁移成功；迁移失败readiness失败；DB/api重启后代理及历史恢复",
+      "status": "NOT_RUN",
+      "required_for_v1": true,
+      "gates": [
+        "G5"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Related behavior may have component coverage; the entire planned fault-injection/acceptance scenario has not been demonstrated."
+    },
+    {
+      "id": "T44",
+      "case": "workspace_quota_and_export_size",
+      "expect": "配额不足可解释拒绝，不丢旧历史、不发布部分完成结果",
+      "status": "NOT_RUN",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Related behavior may have component coverage; the entire planned fault-injection/acceptance scenario has not been demonstrated."
+    },
+    {
+      "id": "T45",
+      "case": "literal_HTML_and_safe_download",
+      "expect": "表头单元格含HTML只显示文字；文件名无响应头注入；危险导出字符串不执行",
+      "status": "NOT_RUN",
+      "required_for_v1": true,
+      "gates": [
+        "G4"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Related behavior may have component coverage; the entire planned fault-injection/acceptance scenario has not been demonstrated."
+    },
+    {
+      "id": "T46",
+      "case": "owner_epoch_lost_and_stale_commit",
+      "expect": "锁失效readiness失败；旧owner接单及提交拒绝；新owner接管后只有匹配epoch可写",
+      "status": "NOT_RUN",
+      "required_for_v1": true,
+      "gates": [
+        "G2",
+        "G5"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Related behavior may have component coverage; the entire planned fault-injection/acceptance scenario has not been demonstrated."
+    },
+    {
+      "id": "T47",
+      "case": "commit_acknowledgement_lost",
+      "expect": "分别模拟提交成功/回滚/未知，查询恢复真实结果；不重复调用模型或退款配额",
+      "status": "NOT_RUN",
+      "required_for_v1": true,
+      "gates": [
+        "G2",
+        "G5"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Related behavior may have component coverage; the entire planned fault-injection/acceptance scenario has not been demonstrated."
+    },
+    {
+      "id": "T48",
+      "case": "failed_import_quota_retained",
+      "expect": "重复畸形上传仍计原字节；配额拒绝正确；终态结算仅一次",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2",
+        "G6"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T49",
+      "case": "multiple_mappings_same_pair",
+      "expect": "同一文件对两个mapping各revision=1可成功，不能被跨mapping唯一约束阻止",
+      "status": "NOT_RUN",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Related behavior may have component coverage; the entire planned fault-injection/acceptance scenario has not been demonstrated."
+    },
+    {
+      "id": "T50",
+      "case": "operation_resource_relation",
+      "expect": "run/import/model_call/export可按operation双向定位；失败恢复及重试不误改其他资源",
+      "status": "NOT_RUN",
+      "required_for_v1": true,
+      "gates": [
+        "G2",
+        "G6"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Related behavior may have component coverage; the entire planned fault-injection/acceptance scenario has not been demonstrated."
+    },
+    {
+      "id": "T51",
+      "case": "same_import_both_sides",
+      "expect": "同一import用于左右时按(side,row_id)各覆盖一次并正常equal",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T52",
+      "case": "empty_reports_and_single_side_invalid",
+      "expect": "空空报告no_data且比例null；单侧坏数值仍保留left_only/right_only和类型问题",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2",
+        "G4"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T53",
+      "case": "sparse_columns_outside_header",
+      "expect": "表头三列而Z列有值时明确拒绝；纯格式Z列不扩大表宽；不能静默丢值",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T54",
+      "case": "stopping_reserves_capacity",
+      "expect": "超时revocation先于终止；stopping不能completed或接收新任务；join完成后再释放",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2",
+        "G5"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T55",
+      "case": "gate_missing_case_and_stale_evidence",
+      "expect": "删一条必需验收证据/换镜像/标BLOCKED，release均不能PASS；不以规格模型结果替代应用证据",
+      "status": "NOT_RUN",
+      "required_for_v1": true,
+      "gates": [
+        "G1"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Related behavior may have component coverage; the entire planned fault-injection/acceptance scenario has not been demonstrated."
+    },
+    {
+      "id": "T56",
+      "case": "pagination_byte_budget_and_identity",
+      "expect": "字节预算截短页面后游标无跳行/重行/循环；左右错序列导出按side/ordinal准确标识",
+      "status": "NOT_RUN",
+      "required_for_v1": true,
+      "gates": [
+        "G2",
+        "G4"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Related behavior may have component coverage; the entire planned fault-injection/acceptance scenario has not been demonstrated."
+    },
+    {
+      "id": "T57",
+      "case": "normalization_and_column_hash_identity",
+      "expect": "只trim规定字符；NBSP/全角空格不被默改；随机column_id不改变内容hash",
+      "status": "PASS",
+      "required_for_v1": true,
+      "gates": [
+        "G2"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "See evidence/pytest-final.xml and evidence/browser-checks.json; native Windows runtime only."
+    },
+    {
+      "id": "T58",
+      "case": "concurrent_upload_body_bound",
+      "expect": "两个并行大上传只读取一个有界body，另一明确429；超时断连释放接收槽和临时字节",
+      "status": "NOT_RUN",
+      "required_for_v1": true,
+      "gates": [
+        "G2",
+        "G5"
+      ],
+      "runtime_evidence_required": true,
+      "implementation_evidence": "Related behavior may have component coverage; the entire planned fault-injection/acceptance scenario has not been demonstrated."
+    }
+  ]
+}

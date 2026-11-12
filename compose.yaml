@@ -1,0 +1,55 @@
+name: reconcile-desk
+services:
+  db:
+    image: postgres:17.11-bookworm
+    environment:
+      POSTGRES_DB: reconcile
+      POSTGRES_USER: reconcile
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run scripts/init-env.ps1 first}
+    volumes:
+      - reconcile_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U reconcile -d reconcile']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 15s
+    restart: unless-stopped
+    stop_grace_period: 30s
+  api:
+    build:
+      context: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://reconcile:${POSTGRES_PASSWORD:?Run scripts/init-env.ps1 first}@db:5432/reconcile
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
+      LLM_MODEL: ${LLM_MODEL:-}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      ALLOWED_ORIGINS: http://127.0.0.1:8080,http://localhost:8080
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/ready', timeout=3)"]
+      interval: 5s
+      timeout: 4s
+      retries: 15
+      start_period: 15s
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 35s
+  web:
+    build:
+      context: ./frontend
+    ports:
+      - '127.0.0.1:8080:80'
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, wget, -q, --spider, http://127.0.0.1/]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+volumes:
+  reconcile_data:

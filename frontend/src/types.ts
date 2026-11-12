@@ -1,0 +1,14 @@
+export type Cell = { tag?: string; type?: string; raw?: string | boolean | null; value?: string | boolean | null; truncated?: boolean };
+export type Column = { id: string; name: string; ordinal?: number };
+export type SourceRow = { id: string; ordinal: number; source?: { row?: number; sheet?: string; record?: number; [key: string]: unknown }; cells: Record<string, Cell> };
+export type ImportTable = { id: string; state: string; filename: string; sha256: string; columns: Column[]; row_count: number; rows: SourceRow[]; next_cursor?: string | null };
+export type Comparison = { left_column_id: string; right_column_id: string; type: 'text' | 'decimal'; normalization: 'exact' | 'trim' };
+export type Definition = { key: { left_column_id: string; right_column_id: string; normalization: 'exact' | 'trim' }; comparisons: Comparison[] };
+export type Mapping = { mapping_id: string; current_revision: number; definition: Definition; confirmation: unknown | null; left_import_id: string; right_import_id: string };
+export type Operation = { operation_id: string; state: 'running' | 'stopping' | 'completed' | 'failed' | 'interrupted'; kind?: string; error_code?: string; error_message?: string; resource_id?: string; result_resource?: { kind: string; id: string; path?: string }; poll_url?: string; created_at?: string };
+export type Page<T> = { items: T[]; next_cursor?: string | null; total_count?: number };
+export type ResultStatus = 'equal' | 'changed' | 'left_only' | 'right_only' | 'duplicate_key' | 'invalid_value' | 'blank_key';
+export type Run = { id: string; run_id?: string; state: string; mapping_id: string; left_import_id: string; right_import_id: string; created_at?: string; completeness?: string; summary?: { left_rows?: number; right_rows?: number; input_rows?: number; total_groups?: number; counts?: Partial<Record<ResultStatus, number>>; decision?: string; unresolved_rows?: number } };
+export type ResultGroup = { id: string; status: ResultStatus; key_text: string | null; left_rows: string[]; right_rows: string[]; comparisons?: Record<string, unknown>[]; source_cell_issues?: unknown[]; source_cell_issue_count?: number; issues_truncated?: boolean };
+export type Capabilities = { model: { configured: boolean; model?: string }; limits?: Record<string, unknown> };
+export type Suggestion = { suggestion_id: string; base_revision: number; state: string; proposal: { key?: Definition['key']; key_candidates?: unknown[]; comparisons?: Comparison[]; ambiguities?: string[] } };
