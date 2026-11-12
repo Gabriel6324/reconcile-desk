@@ -82,5 +82,5 @@
     "计划的 58 个验收场景与自动化测试函数数量分别统计。",
     "当前 HTTP types 由前后端对齐并通过完整流程验证，尚未生成共享 OpenAPI 类型。"
   ],
-  "source_fingerprint": "8507984adc971367ceee55f330b27d2392d6da5520002802cefcfa2bf735cd22"
+  "source_fingerprint": "f58f6d5e9034452143b1f086d6e7e0403c2c5bfd8ddc2bb3590f27622a720ca2"
 }

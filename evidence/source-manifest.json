@@ -1,11 +1,11 @@
 {
   "as_of": "2026-11-13",
-  "fingerprint": "8507984adc971367ceee55f330b27d2392d6da5520002802cefcfa2bf735cd22",
+  "fingerprint": "f58f6d5e9034452143b1f086d6e7e0403c2c5bfd8ddc2bb3590f27622a720ca2",
   "sha256": {
     ".dockerignore": "b69b68d190b9d796a2fc9413daa70ce8c91b1924edb4cebdfc3fb623e700ea8f",
     ".env.example": "dfebb0468dbeecb32ead36b782b8e6b7c3e317ed262b0579c587ae94585e465d",
     ".gitattributes": "30c4f95c29ef6e5b13053451b1afdbc0059c3fe2dd99d1ea259fb0f72be63c57",
-    ".github/workflows/checks.yml": "dedd23365a7cad41589ff4703c7459ac633689e8b440b8075fe00d1d16bf118f",
+    ".github/workflows/checks.yml": "88060c7e47a57908615a7454b7caf3949b44bfc8d5f6fd9965c68b15d72c8232",
     ".gitignore": "5a338578e859b93084defa79c14d33e6c8a16d72ebfd0ea8a91631978ee3c29c",
     "backend/.dockerignore": "e8c38f33afff0e3ec175f49f9c57b3f2c04a0279f6e6980e31eb9b908beaf34d",
     "backend/alembic/env.py": "a8e7c657d1350a121a0ef77886ee0eae5e90467248379ce0e78538c4c4fdf7b9",
