@@ -71,7 +71,7 @@ macOS / Linux 先执行 `sh scripts/init-env.sh`，然后使用同一条 Compose
 
 在 backend 下执行 `python -m pytest tests/core tests/api/test_model.py -q` 可检查核心与模拟模型接口。完整测试先设置 `TEST_DATABASE_URL`，数据库名必须为 `reconcile_test`，再执行 `python -m pytest tests -q`。集成测试会重建这个专用测试库的 public schema。
 
-验收结果以 `evidence/verification.json` 为准。`python scripts/verify-evidence.py` 检查交付代码是否仍与验收指纹一致，修改后需要重新验证。GitHub Actions 工作流已配置，远端执行待发布仓库后验证。
+验收结果以 `evidence/verification.json` 为准。`python scripts/verify-evidence.py` 检查交付代码是否仍与验收指纹一致，修改后需要重新验证。[GitHub Actions 远端检查](https://github.com/Gabriel6324/reconcile-desk/actions/runs/43281908204)已通过：Linux / PostgreSQL 17.11 环境中 119 项后端测试及前端构建全部成功。这不等同于应用完整 Docker Compose 流程或真实模型验收。
 
 浏览器复测脚本为 `scripts/browser-smoke.cjs`，需要安装 Playwright，并设置 `BROWSER_EXECUTABLE` 指向可用的 Chromium / Edge。服务启动后执行 `node scripts/browser-smoke.cjs`，脚本会上传标注样例、生成新记录并核验实际下载。可用 `PLAYWRIGHT_MODULE` 指向已有的 Playwright 模块目录。
 

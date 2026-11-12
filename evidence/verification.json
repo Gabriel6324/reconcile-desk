@@ -56,7 +56,10 @@
     "docker_build": "NOT_RUN",
     "compose_config": "NOT_RUN",
     "compose_recreate": "NOT_RUN",
-    "ci_workflow": "CONFIGURED_NOT_RUN_REMOTELY"
+    "ci_workflow": "PASS_GITHUB_ACTIONS",
+    "ci_run_url": "https://github.com/Gabriel6324/reconcile-desk/actions/runs/43281908204",
+    "ci_tested_commit": "5ddd212553ff64760c9ff8c81d76e5d92c5677f3",
+    "ci_backend_passed": 119
   },
   "remaining": [
     {
@@ -82,5 +85,5 @@
     "计划的 58 个验收场景与自动化测试函数数量分别统计。",
     "当前 HTTP types 由前后端对齐并通过完整流程验证，尚未生成共享 OpenAPI 类型。"
   ],
-  "source_fingerprint": "f58f6d5e9034452143b1f086d6e7e0403c2c5bfd8ddc2bb3590f27622a720ca2"
+  "source_fingerprint": "7be0de21d27de27236e2eee85b669f1f0ab8b6ee8d24aee797b415baf9f10ed9"
 }
