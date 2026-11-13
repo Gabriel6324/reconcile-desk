@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "checked_at": "2026-11-13T11:23:14.569Z",
+  "checked_at": "2026-11-13T11:31:07.289Z",
   "origin": "http://127.0.0.1:8080",
   "runtime": "GitHub Actions Linux Docker Compose (PostgreSQL, FastAPI, Nginx)",
   "checks": [
@@ -11,12 +11,12 @@
     "Missing headers produce an actionable message while preserving all current draft selections and review state",
     "Template deletion supports keyboard cancellation and explicit confirmation without changing drafts or historical results"
   ],
-  "retained_template_id": "0748df98-788a-4b60-b0c0-ac59e626d359",
-  "retained_template_name": "验收_订单金额_ddb0b951",
-  "original_run_id": "121cf840-3d27-477a-b88f-6b8053d0f774",
-  "reordered_run_id": "f23d4d02-7607-42d1-b67e-9140c76c7d64",
-  "reordered_left_import_id": "70064d3e-36e3-4bf5-bc7f-2a273a26b061",
-  "reordered_right_import_id": "dc874cff-5e6e-4b46-8578-9df060c924af",
-  "export_sha256": "7b48c2b7de92bbfb83b4b923e487da2d49a7808ea2c6a2e7657404580022ff97",
+  "retained_template_id": "9ac60320-f07b-40b0-83e0-89ec3a3641bc",
+  "retained_template_name": "验收_订单金额_5b84d7b7",
+  "original_run_id": "099b94b0-fba3-4448-95ba-fc582f5ad839",
+  "reordered_run_id": "8921f292-3b98-4682-b17c-9d7436d8be00",
+  "reordered_left_import_id": "c81787e2-27f9-4328-9781-eba37d795805",
+  "reordered_right_import_id": "7c387f68-f14f-46ec-be10-f0368b04c083",
+  "export_sha256": "d95f9ae1424460a0ce61ccf5422695e86c4469f5f20f41cb65cffa568ebdbdf1",
   "page_errors": []
 }

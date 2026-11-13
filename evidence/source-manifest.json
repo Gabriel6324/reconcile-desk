@@ -1,6 +1,6 @@
 {
   "as_of": "2026-11-13",
-  "fingerprint": "9d6b4599bc2ff647ae22bd56f459a9688f6333c927e4b69a6d0bd84a19bb66c7",
+  "fingerprint": "a439e237b30a7425771027184b7335ed26554b75d6ebfb7fca99b52c3b3442a6",
   "sha256": {
     ".dockerignore": "b69b68d190b9d796a2fc9413daa70ce8c91b1924edb4cebdfc3fb623e700ea8f",
     ".env.example": "dfebb0468dbeecb32ead36b782b8e6b7c3e317ed262b0579c587ae94585e465d",
@@ -52,7 +52,7 @@
     "frontend/src/types.ts": "b334712a03ee4aa1e2a6d58ecbb795bbc6590a6a573c2cf5fdaa6f4bd0c6d848",
     "frontend/tsconfig.json": "6bcc1196c98a7e077f26d90225ee9e5a59bef863b710cb92482f4e185a7123e9",
     "frontend/vite.config.ts": "ec0106ab571c94dc4b80e7c9ab17bd733e15d4b63b3906c5a8faf6cdf21dc6b1",
-    "README.md": "077ea19db394a6206dc709d9bbe687066d59dfda5026991cafb577a4be25d61d",
+    "README.md": "92b5604a45e782abf86a041d775aee4b75c539ffbdaeef9b65dd0967aa7518b9",
     "samples/left-orders.csv": "ca9ae05d392e21b82efb77c4f8fc63217ba082c9549724c3f946bd0052996299",
     "samples/right-payments.csv": "95267563b1e29b0d767ef89ee538f34c62aa9d97a418320818d6358fbe85dfe3",
     "scripts/browser-smoke.cjs": "196653270f54953681a78c7ec99e126c961acf3bca387e2f7dc62ddb4aac2310",

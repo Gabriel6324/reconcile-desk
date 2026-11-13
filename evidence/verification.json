@@ -3,14 +3,14 @@
   "version": "0.2.0",
   "delivery_status": "TEMPLATES_PORTABLE_AND_DOCKER_VERIFIED",
   "automated_tests": {
-    "passed": 133,
+    "passed": 134,
     "status": "PASS",
     "runtime": "Linux with PostgreSQL 17.11",
     "model_scope": "mock provider responses"
   },
   "ci": {
-    "url": "https://github.com/Gabriel6324/reconcile-desk/actions/runs/43416440954",
-    "tested_commit": "aef07a24156afb17d82762ce0813a78b5caef967",
+    "url": "https://github.com/Gabriel6324/reconcile-desk/actions/runs/43417463630",
+    "tested_commit": "7f0f6dea98e1b6b808ad75f950e4b6a40c2194c8",
     "backend": "PASS",
     "frontend_build": "PASS",
     "docker": "PASS"
@@ -42,5 +42,5 @@
     "Template application always requires a new human confirmation.",
     "Original v0.1 package and evidence are retained."
   ],
-  "source_fingerprint": "9d6b4599bc2ff647ae22bd56f459a9688f6333c927e4b69a6d0bd84a19bb66c7"
+  "source_fingerprint": "a439e237b30a7425771027184b7335ed26554b75d6ebfb7fca99b52c3b3442a6"
 }

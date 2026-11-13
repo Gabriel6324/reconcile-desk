@@ -6,7 +6,7 @@
 
 v0.2 新增可保存的字段模板、列重排复用与缺失字段提示，完善手机字段编辑和删除确认，并补齐完整 Docker Compose 交付与保留数据重建验收。
 
-![核对结果与原始资料追溯](evidence/portable/results-desktop.png)
+![核对结果与原始资料追溯](evidence/v0.2/results-desktop.png)
 
 ## 启动
 
@@ -70,7 +70,7 @@ macOS / Linux 先执行 `sh scripts/init-env.sh`，然后使用同一条 Compose
 
 实际运行证据保存在 `evidence/verification.json`，历史 v0.1 证据保留在 `evidence/portable`。新版在原有核心、模拟模型、PostgreSQL 集成和接收边界测试基础上，增加模板复用、缺失表头、并发同名、容量回滚、删除保护与旧库迁移检查。
 
-2026-11-13 [对应提交的 CI 验收](https://github.com/Gabriel6324/reconcile-desk/actions/runs/43416440954)通过 133 项后端测试、前端构建及完整 Docker 流程。最终 Windows ZIP 通过 9 项基础浏览器检查和 6 项模板流程检查；旧版数据库升级与正常重启后，历史及导出保持一致，模板可继续用于新核对。详见 `evidence/v0.2`。
+2026-11-13 [对应提交的 CI 验收](https://github.com/Gabriel6324/reconcile-desk/actions/runs/43417463630)通过 134 项后端测试、前端构建及完整 Docker 流程。最终 Windows ZIP 通过 9 项基础浏览器检查和 6 项模板流程检查；旧版数据库升级与正常重启后，历史及导出保持一致，模板可继续用于新核对。详见 `evidence/v0.2`。
 
 Docker 验收在 GitHub Actions 的隔离环境构建真实镜像，经过 Nginx 执行浏览器流程，并保留数据卷重建 PostgreSQL、API 和网页容器。它比较历史、原始资料与导出文件，随后用保存的模板执行新的核对。原计划中其余故障注入场景逐项记录在 `evidence/acceptance-status.json`，完整原始故障矩阵仍有待执行项。
 
