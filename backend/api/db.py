@@ -91,6 +91,14 @@ class Revision(Base):
     confirmation: Mapped[dict | None] = mapped_column(JSONB)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
 
+class MappingTemplate(Base):
+    __tablename__ = 'mapping_templates'
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    name: Mapped[str] = mapped_column(String(80), unique=True)
+    specification: Mapped[dict] = mapped_column(JSONB)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    __table_args__ = (CheckConstraint('char_length(name) BETWEEN 1 AND 80'),)
+
 class Run(Base):
     __tablename__ = 'runs'
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)

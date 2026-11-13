@@ -10,7 +10,7 @@ from sqlalchemy import select, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import DBAPIError
 from .db import (Executor, Quota, Operation, Import, ImportRow, Mapping, Revision,
-                 Run, Coverage, Export, Suggestion, now, new_id)
+                 Run, Coverage, Export, Suggestion, MappingTemplate, now, new_id)
 from .common import Problem, encoded, digest, needed, op_view
 from .worker import compute
 from . import model
@@ -138,6 +138,8 @@ class Runner:
             total += len(encoded(item.definition)) + len(encoded(item.confirmation))
         for item in s.scalars(select(Suggestion)):
             total += len(encoded(item.metadata_json)) + len(encoded(item.proposal))
+        for item in s.scalars(select(MappingTemplate)):
+            total += len(item.name.encode('utf-8')) + len(encoded(item.specification))
         for item in s.scalars(select(Operation)):
             total += len(encoded(item.request_snapshot)) + len((item.error_message or '').encode('utf-8'))
         quota.committed = total

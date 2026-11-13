@@ -21,9 +21,9 @@ from core import CoreError, validate_mapping
 from core.parsers import MAX_FILE_BYTES, PARSER_VERSION
 from core.reconcile import ALGORITHM_VERSION, STATUSES
 from .common import Problem, encoded, digest, needed, page, op_view
-from .db import make_engine, Import, Mapping, Revision, Run, Operation, Export, Suggestion, now, new_id
+from .db import make_engine, Import, Mapping, Revision, MappingTemplate, Run, Operation, Export, Suggestion, now, new_id
 from .executor import Runner
-from . import model
+from . import model, templates
 
 
 @asynccontextmanager
@@ -141,6 +141,16 @@ class Expected(Body):
 
 class Edit(Expected):
     definition: dict
+
+
+class TemplateCreate(Expected):
+    name: str
+    mapping_id: str = Field(min_length=1, max_length=36)
+
+
+class TemplatePreview(Body):
+    left_import_id: str = Field(min_length=1, max_length=36)
+    right_import_id: str = Field(min_length=1, max_length=36)
 
 
 class RunBody(Expected):
@@ -319,6 +329,55 @@ def mappings(request: Request, cursor: int = 0, limit: int = 50):
 def get_mapping(ident: str, request: Request):
     with runner(request).Session() as s:
         return mapping_view(s, needed(s, Mapping, ident))
+
+
+@app.get('/api/templates')
+def list_templates(request: Request, cursor: int = 0, limit: int = 50):
+    page([], cursor, limit)
+    with runner(request).Session() as s:
+        items = s.scalars(select(MappingTemplate).order_by(MappingTemplate.created_at.desc(), MappingTemplate.id.desc()))
+        return page([templates.template_view(item) for item in items], cursor, limit)
+
+
+@app.post('/api/templates')
+def create_template(body: TemplateCreate, request: Request):
+    name = templates.template_name(body.name)
+    r = runner(request)
+    with r.Session.begin() as s:
+        quota = r.fence(s)
+        item, rev = revision(s, body.mapping_id, body.expected_revision)
+        if not rev.confirmation or rev.confirmation['definition_hash'] != digest(rev.definition):
+            raise Problem('CONFIRMATION_STALE', '请先确认当前字段映射，再保存为模板。', 409)
+        if s.scalar(select(MappingTemplate.id).where(MappingTemplate.name == name)):
+            raise Problem('TEMPLATE_NAME_EXISTS', '同名模板已存在，请使用其他名称。', 409)
+        if s.scalar(select(func.count()).select_from(MappingTemplate)) >= templates.MAX_TEMPLATES:
+            raise Problem('TEMPLATE_LIMIT', '最多可保存 50 个模板，请先删除不再使用的模板。', 409)
+        saved = MappingTemplate(id=new_id(), name=name,
+            specification=templates.specification(ready_import(s, item.left_id).parsed,
+                                                   ready_import(s, item.right_id).parsed, rev.definition))
+        s.add(saved)
+        save_quota(r, s, quota)
+        return templates.template_view(saved)
+
+
+@app.post('/api/templates/{ident}/preview')
+def preview_template(ident: str, body: TemplatePreview, request: Request):
+    with runner(request).Session() as s:
+        item = needed(s, MappingTemplate, ident)
+        definition = templates.preview(item.specification, ready_import(s, body.left_import_id).parsed,
+                                       ready_import(s, body.right_import_id).parsed)
+        return {'template_id': item.id, 'name': item.name, 'definition': definition}
+
+
+@app.delete('/api/templates/{ident}')
+def delete_template(ident: str, request: Request):
+    r = runner(request)
+    with r.Session.begin() as s:
+        quota = r.fence(s)
+        item = needed(s, MappingTemplate, ident)
+        s.delete(item)
+        save_quota(r, s, quota)
+        return {'deleted': True, 'id': ident}
 
 
 @app.put('/api/mappings/{ident}')

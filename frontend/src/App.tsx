@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { api, ApiError, displayCell, download, resourceId, waitOperation } from './api';
 import Icon from './Icon';
-import type { Capabilities, Comparison, Definition, ImportTable, Mapping, Operation, Page, ResultGroup, ResultStatus, Run, SourceRow, Suggestion } from './types';
+import type { Capabilities, Comparison, Definition, ImportTable, Mapping, MappingTemplate, Operation, Page, ResultGroup, ResultStatus, Run, SourceRow, Suggestion, TemplatePreview } from './types';
 
 const statusLabels: Record<ResultStatus, string> = { equal: '一致', changed: '存在差异', left_only: '仅左表', right_only: '仅右表', duplicate_key: '重复主键', invalid_value: '无效值', blank_key: '空主键' };
 const stateLabels: Record<string, string> = { running: '处理中', stopping: '正在停止', completed: '已完成', failed: '失败', interrupted: '已中断' };
@@ -29,6 +29,10 @@ export default function App() {
   const [suggestion, setSuggestion] = useState<Suggestion | null>(null);
   const [task, setTask] = useState('');
   const [confirmedReview, setConfirmedReview] = useState(false);
+  const [templates, setTemplates] = useState<MappingTemplate[]>([]);
+  const [templateId, setTemplateId] = useState('');
+  const [templateName, setTemplateName] = useState('');
+  const [templateToDelete, setTemplateToDelete] = useState<MappingTemplate | null>(null);
   const [run, setRun] = useState<Run | null>(null);
   const [runs, setRuns] = useState<Run[]>([]);
   const [runCursor, setRunCursor] = useState<string | null>(null);
@@ -50,13 +54,28 @@ export default function App() {
   const initialized = useRef(false);
   const resultRequest = useRef(0);
   const drawerClose = useRef<HTMLButtonElement>(null);
+  const templateDeleteButton = useRef<HTMLButtonElement>(null);
+  const templateDeleteCancel = useRef<HTMLButtonElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
   const busyRef = useRef(false);
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, [view, step]);
+  useEffect(() => {
+    if (!templateToDelete || step !== 2 || view !== 'workspace') return;
+    templateDeleteCancel.current?.focus();
+    const cancel = (event: KeyboardEvent) => { if (event.key === 'Escape') setTemplateToDelete(null); };
+    document.addEventListener('keydown', cancel);
+    return () => { document.removeEventListener('keydown', cancel); templateDeleteButton.current?.focus(); };
+  }, [templateToDelete?.id, step, view]);
 
   async function refreshLists() {
-    const [a, b, c, d] = await Promise.all([api<Page<ImportTable>>('/imports?limit=100'), api<Page<Run>>('/runs?limit=20'), api<Page<Operation>>('/operations?limit=20'), api<Capabilities>('/capabilities')]);
+    const [a, b, c, d] = await Promise.all([api<Page<ImportTable>>('/imports?limit=100'), api<Page<Run>>('/runs?limit=20'), api<Page<Operation>>('/operations?limit=20'), api<Capabilities>('/capabilities'), refreshTemplates()]);
     setImports(a.items); setRuns(b.items); setRunCursor(b.next_cursor || null); setOperations(c.items); setCapabilities(d); setConnected(true);
+  }
+  async function refreshTemplates() {
+    const next = await api<Page<MappingTemplate>>('/templates?limit=100');
+    setTemplates(next.items);
+    setTemplateId(current => next.items.some(item => item.id === current) ? current : '');
+    setTemplateToDelete(current => current && next.items.some(item => item.id === current.id) ? current : null);
   }
   async function perform(label: string, action: () => Promise<void>) {
     if (busyRef.current) return;
@@ -81,7 +100,7 @@ export default function App() {
   async function loadRun(id: string) {
     const next = await api<Run>(`/runs/${encodeURIComponent(id)}`);
     const [a, b, m] = await Promise.all([loadImport(next.left_import_id), loadImport(next.right_import_id), api<Mapping>(`/mappings/${next.mapping_id}`)]);
-    setLeft(a); setRight(b); setMapping(m); setDefinition(m.definition); setRun(next); setFilter(''); setQuery(''); setStep(3); setView('workspace'); setConfirmedReview(false); setSuggestion(null);
+    setLeft(a); setRight(b); setMapping(m); setDefinition(m.definition); setRun(next); setFilter(''); setQuery(''); setStep(3); setView('workspace'); setConfirmedReview(false); setSuggestion(null); setTemplateName(''); setTemplateToDelete(null);
   }
   async function restorePending(context: Pending) {
     const op = await api<Operation>(`/operations/${context.operation_id}`);
@@ -128,9 +147,9 @@ export default function App() {
     return () => { document.removeEventListener('keydown', close); previousFocus.current?.focus(); };
   }, [selected?.group.id]);
 
-  function newTask() { setLeft(null); setRight(null); setMapping(null); setDefinition(emptyDefinition()); setSuggestion(null); setRun(null); setStep(1); setView('workspace'); setError(''); setNotice(''); setConfirmedReview(false); setTask(''); }
+  function newTask() { setLeft(null); setRight(null); setMapping(null); setDefinition(emptyDefinition()); setSuggestion(null); setRun(null); setStep(1); setView('workspace'); setError(''); setNotice(''); setConfirmedReview(false); setTask(''); setTemplateId(''); setTemplateName(''); setTemplateToDelete(null); }
   function updateDefinition(next: Definition) { setDefinition(next); setConfirmedReview(false); }
-  function invalidateSources() { setMapping(null); setRun(null); setSuggestion(null); setDefinition(emptyDefinition()); setConfirmedReview(false); }
+  function invalidateSources() { setMapping(null); setRun(null); setSuggestion(null); setDefinition(emptyDefinition()); setConfirmedReview(false); setTemplateToDelete(null); }
   async function uploadFile(file: File, side: 'left' | 'right') {
     if (!/\.(csv|xlsx)$/i.test(file.name)) throw new ApiError('请选择 CSV 或 XLSX 文件。');
     if (file.size > 10 * 1024 * 1024) throw new ApiError('单个文件不能超过 10 MiB。');
@@ -180,6 +199,38 @@ export default function App() {
     const saved = await api<Mapping>(`/mappings/${mapping.mapping_id}/apply-suggestion`, { method: 'POST', body: { expected_revision: mapping.current_revision, suggestion_id: suggestion.suggestion_id } });
     setMapping(saved); setDefinition(saved.definition); setConfirmedReview(false); setSuggestion(null); setNotice('建议已填入，请逐项检查后确认核对。');
   }
+  async function applyTemplate() {
+    if (!left || !right || !templateId) return;
+    const preview = await api<TemplatePreview>(`/templates/${encodeURIComponent(templateId)}/preview`, {
+      method: 'POST', body: { left_import_id: left.id, right_import_id: right.id },
+    });
+    // Change the draft only after a complete preview succeeds. A new mapping
+    // prevents a confirmation from an earlier source pair being reused.
+    setDefinition(preview.definition); setMapping(null); setRun(null); setSuggestion(null);
+    setConfirmedReview(false); setTemplateToDelete(null);
+    setNotice(`已应用模板“${preview.name}”。字段按表头名称对应，请检查主键、比较方式与忽略字段，再勾选确认。`);
+  }
+  async function saveTemplate() {
+    const name = templateName.trim();
+    if (!name) throw new ApiError('请先填写模板名称。');
+    if (!run || !mapping?.confirmation || mapping.mapping_id !== run.mapping_id || mapping.current_revision !== run.revision) {
+      throw new ApiError('这份历史结果的字段映射已调整，请重新核对后再保存模板。');
+    }
+    const saved = await api<MappingTemplate>('/templates', { method: 'POST', body: {
+      name, mapping_id: run.mapping_id, expected_revision: run.revision,
+    } });
+    setTemplates(current => [saved, ...current.filter(item => item.id !== saved.id)]);
+    setTemplateId(saved.id); setTemplateName('');
+    setNotice(`模板“${saved.name}”已保存。下次导入同类表格后，在“确认字段”中选择并应用。`);
+  }
+  async function deleteTemplate() {
+    if (!templateToDelete) return;
+    const removed = templateToDelete;
+    await api<{ deleted: boolean; id: string }>(`/templates/${encodeURIComponent(removed.id)}`, { method: 'DELETE' });
+    setTemplates(current => current.filter(item => item.id !== removed.id));
+    setTemplateId(current => current === removed.id ? '' : current); setTemplateToDelete(null);
+    setNotice(`模板“${removed.name}”已删除。已填入的字段草稿和历史结果仍保留。`);
+  }
   async function fetchResults(id: string, status: string, cursor?: string) {
     const request = ++resultRequest.current; setResultBusy(true);
     try {
@@ -217,6 +268,8 @@ export default function App() {
   const visibleResults = results.items.filter(x => !query || (x.key_text || '').toLocaleLowerCase().includes(query.toLocaleLowerCase()));
   const activeOperations = operations.filter(x => x.state === 'running' || x.state === 'stopping');
   const latestRun = runs.find(x => x.state === 'completed');
+  const selectedTemplate = templates.find(item => item.id === templateId);
+  const canSaveTemplate = Boolean(run && mapping?.confirmation && mapping.mapping_id === run.mapping_id && mapping.current_revision === run.revision);
 
   function renderRuns(items: Run[]) {
     if (!items.length) return <div className="empty-state"><span className="empty-icon"><Icon name="history" size={27} /></span><h3>第一份核对，从这里开始</h3><p>完成核对后，结果与原始来源会保存在这里。</p><button className="button primary" onClick={newTask} disabled={!!busy}><Icon name="plus" />新建核对</button></div>;
@@ -234,6 +287,33 @@ export default function App() {
   function columnSelect(side: 'left' | 'right', value: string, label: string, onChange: (value: string) => void) {
     const columns = side === 'left' ? left?.columns : right?.columns;
     return <select aria-label={label} value={value} disabled={!!busy} onChange={e => onChange(e.target.value)}><option value="">选择{side === 'left' ? '左表' : '右表'}字段</option>{columns?.map((c, i) => <option value={c.id} key={c.id}>{c.name || '（空表头）'} · 第 {i + 1} 列</option>)}</select>;
+  }
+  function templatePicker() {
+    return <Panel title="复用字段模板" className="template-panel" aside={<button className="text-button" aria-label="刷新模板列表" disabled={!!busy} onClick={() => void perform('正在刷新模板', refreshTemplates)}><Icon name="refresh" size={15} />刷新</button>}>
+      <div className="template-content">
+        <p className="template-description">常用表格不必重复选字段。模板按表头名称对应，列的位置变化也可以复用。</p>
+        {templates.length ? <>
+          <div className="template-controls"><label className="template-field" htmlFor="mapping-template"><span>已保存的字段模板</span><select id="mapping-template" value={templateId} disabled={!!busy} onChange={event => { setTemplateId(event.target.value); setTemplateToDelete(null); }}><option value="">选择模板…</option>{templates.map(item => <option value={item.id} key={item.id}>{item.name} · {item.comparison_count} 组字段</option>)}</select></label>
+            <button className="button secondary" disabled={!!busy || !selectedTemplate || !!templateToDelete} onClick={() => void perform('正在匹配模板字段', applyTemplate)}><Icon name="link" size={16} />应用模板</button>
+            <button ref={templateDeleteButton} className="text-button template-delete-button" disabled={!!busy || !selectedTemplate || !!templateToDelete} onClick={() => setTemplateToDelete(selectedTemplate || null)}><Icon name="trash" size={15} />删除模板</button>
+          </div>
+          {selectedTemplate && <p className="template-hint">保存于 {date(selectedTemplate.created_at)} · 应用后请重新确认核对范围。</p>}
+          {templateToDelete && <div className="template-delete-confirm" role="group" aria-label="确认删除字段模板"><div><strong>删除模板“{templateToDelete.name}”？</strong><p>删除后无法从模板列表恢复。当前字段草稿和历史核对结果会保留。</p></div><div className="template-confirm-actions"><button ref={templateDeleteCancel} className="button small secondary" disabled={!!busy} onClick={() => setTemplateToDelete(null)}>取消删除</button><button className="button small template-danger" disabled={!!busy} onClick={() => void perform('正在删除模板', deleteTemplate)}>确认删除模板</button></div></div>}
+        </> : <div className="template-empty"><Icon name="link" size={20} /><div><strong>还没有保存的模板</strong><p>先完成一次核对，在结果页保存字段规则，下次导入同类表格即可使用。</p></div></div>}
+      </div>
+    </Panel>;
+  }
+  function templateSaver() {
+    return <Panel title="保存本次字段规则" className="template-panel template-save-panel" aside={<span className="muted">字段模板 · {templates.length} / 50</span>}>
+      <div className="template-content"><p className="template-description">把已确认的主键、字段对应和比较方式存为模板，下次核对同类表格时直接复用。模板不保存单元格内容。</p>
+        <form className="template-controls" onSubmit={event => { event.preventDefault(); if (!busy && canSaveTemplate && templateName.trim() && templates.length < 50) void perform('正在保存字段模板', saveTemplate); }}>
+          <label className="template-field" htmlFor="template-name"><span>模板名称</span><input id="template-name" value={templateName} maxLength={80} placeholder="例如：订单与收款金额核对" autoComplete="off" disabled={!!busy || !canSaveTemplate || templates.length >= 50} onChange={event => setTemplateName(event.target.value)} /></label>
+          <button className="button secondary" type="submit" disabled={!!busy || !canSaveTemplate || !templateName.trim() || templates.length >= 50}><Icon name="plus" size={16} />保存为模板</button>
+        </form>
+        {!canSaveTemplate && <p className="template-hint">这份历史结果的字段映射已调整。请重新核对后，再保存对应的模板。</p>}
+        {templates.length >= 50 && <p className="template-hint">已保存 50 个模板。可在“确认字段”中删除不再使用的模板，再保存新的规则。</p>}
+      </div>
+    </Panel>;
   }
   function changeComparison(index: number, change: Partial<Comparison>) { updateDefinition({ ...definition, comparisons: definition.comparisons.map((x, i) => i === index ? { ...x, ...change } : x) }); }
   function ignored(side: 'left' | 'right') {
@@ -268,7 +348,7 @@ export default function App() {
     <aside className="sidebar"><a className="brand" href="#" onClick={e => { e.preventDefault(); setView('overview'); }} aria-label="对齐工作区首页"><span className="brand-symbol"><i /><i /><i /></span><span>对齐<small>RECONCILE DESK</small></span></a><div className="workspace-label"><span className="workspace-avatar">个</span><div>个人工作区<small>本地资料 · 自主核对</small></div><span className="local-tag">LOCAL</span></div>
       <button className="button primary new-button" onClick={newTask} disabled={!!busy}><Icon name="plus" />新建核对</button>
       <nav aria-label="主导航"><button className={view === 'overview' ? 'active' : ''} onClick={() => setView('overview')}><Icon name="grid" />工作区概览</button><button className={view === 'workspace' ? 'active' : ''} onClick={() => setView('workspace')}><Icon name="rows" />当前核对{(left || right) && <span className="nav-dot" />}</button><button className={view === 'history' ? 'active' : ''} onClick={() => { setView('history'); void perform('正在刷新历史', refreshLists); }}><Icon name="history" />核对历史</button></nav>
-      <div className="sidebar-note"><span className="note-mark">A <Icon name="link" size={16} /> B</span><strong>每一处差异，都有出处。</strong><p>从原始表格到核对结果，<br />保留完整的数据线索。</p></div><div className="sidebar-bottom"><span className={`connection-dot ${connected ? 'online' : ''}`} />{connected ? '工作区已连接' : '正在等待服务'}<span>v0.1</span></div>
+      <div className="sidebar-note"><span className="note-mark">A <Icon name="link" size={16} /> B</span><strong>每一处差异，都有出处。</strong><p>从原始表格到核对结果，<br />保留完整的数据线索。</p></div><div className="sidebar-bottom"><span className={`connection-dot ${connected ? 'online' : ''}`} />{connected ? '工作区已连接' : '正在等待服务'}<span>v0.2</span></div>
     </aside>
     <div className="main-shell"><header className="topbar"><div className="breadcrumb">个人工作区 <Icon name="chevron" size={14} /><strong>{view === 'overview' ? '概览' : view === 'history' ? '核对历史' : '当前核对'}</strong></div><span className="private-label"><span className="connection-dot online" />本地工作区</span></header><main>
       {error && <div className="message error" role="alert"><Icon name="alert" /><div><strong>操作未完成</strong><p>{error}</p></div><button className="icon-button" aria-label="关闭错误提示" onClick={() => setError('')}><Icon name="close" /></button></div>}
@@ -290,6 +370,7 @@ export default function App() {
         <div className="stepper" aria-label="核对步骤">{['导入资料', '确认字段', '查看结果'].map((text, i) => <div className={step === i + 1 ? 'current' : step > i + 1 ? 'done' : ''} key={text}><span>{step > i + 1 ? <Icon name="check" size={15} /> : `0${i + 1}`}</span><strong>{text}</strong>{i < 2 && <i />}</div>)}</div>
         {step === 1 && <><div className="section-intro"><h2>选择两份资料</h2><button className="text-button" disabled={!!busy || !connected} onClick={() => void perform('正在导入示例数据', useSamples)}>使用示例数据<Icon name="arrow" size={15} /></button></div><div className="source-grid">{uploadCard('left', left)}{uploadCard('right', right)}</div><div className="format-note"><Icon name="alert" size={17} /><p>第一行作为表头；XLSX 仅支持单个工作表，不接受公式。所有数据行都会参与核对。</p></div><div className="step-footer"><span>{left && right ? '两份资料已就绪，可以选择对应字段。' : '导入完成后，可预览并确认资料内容。'}</span><button className="button primary" disabled={!!busy || !left || !right} onClick={() => { setStep(2); setConfirmedReview(false); }}>下一步：确认字段<Icon name="arrow" size={17} /></button></div></>}
         {step === 2 && left && right && <><div className="source-pair"><span><b>A</b>{left.filename}<small>{left.row_count} 行</small></span><Icon name="link" /><span><b>B</b>{right.filename}<small>{right.row_count} 行</small></span></div>
+          {templatePicker()}
           <div className="mapping-layout"><div><Panel title="01  主键对应" aside={<span className="muted">用于确定哪两行属于同一条记录</span>}><div className="key-mapping">{columnSelect('left', definition.key.left_column_id, '左表主键', value => updateDefinition({ ...definition, key: { ...definition.key, left_column_id: value } }))}<Icon name="link" />{columnSelect('right', definition.key.right_column_id, '右表主键', value => updateDefinition({ ...definition, key: { ...definition.key, right_column_id: value } }))}</div><div className="key-options"><label>主键处理<select aria-label="主键空白处理" value={definition.key.normalization} disabled={!!busy} onChange={e => updateDefinition({ ...definition, key: { ...definition.key, normalization: e.target.value as 'exact' | 'trim' } })}><option value="exact">按原文精确匹配</option><option value="trim">去除首尾空格、制表符及换行</option></select></label><p>主键按文本比较；空主键与重复主键单独列出，不会自动配对。</p></div></Panel>
           <Panel title="02  核对字段" aside={<button className="text-button" disabled={!!busy || definition.comparisons.length >= 20} onClick={() => updateDefinition({ ...definition, comparisons: [...definition.comparisons, { left_column_id: '', right_column_id: '', type: 'text', normalization: 'exact' }] })}><Icon name="plus" size={16} />添加字段</button>}><div className="comparison-list"><div className="comparison-labels"><span>左表字段</span><span>右表字段</span><span>比较类型</span><span>空白处理</span><span /></div>{definition.comparisons.map((comparison, index) => <div className="comparison-row" key={index}>{columnSelect('left', comparison.left_column_id, `第${index + 1}组左表字段`, value => changeComparison(index, { left_column_id: value }))}{columnSelect('right', comparison.right_column_id, `第${index + 1}组右表字段`, value => changeComparison(index, { right_column_id: value }))}<select aria-label={`第${index + 1}组比较类型`} value={comparison.type} disabled={!!busy} onChange={e => changeComparison(index, { type: e.target.value as 'text' | 'decimal' })}><option value="text">文本</option><option value="decimal">精确数值</option></select><select aria-label={`第${index + 1}组空白处理`} value={comparison.normalization} disabled={!!busy} onChange={e => changeComparison(index, { normalization: e.target.value as 'exact' | 'trim' })}><option value="exact">保留原样</option><option value="trim">去除首尾空白</option></select><button className="icon-button" aria-label={`删除第${index + 1}组字段`} disabled={!!busy || definition.comparisons.length === 1} onClick={() => updateDefinition({ ...definition, comparisons: definition.comparisons.filter((_, i) => i !== index) })}><Icon name="trash" size={17} /></button></div>)}</div><p className="inline-note">精确数值按十进制比较；空值与格式异常会保留为待处理，不按 0 计算。</p></Panel>
           <Panel title="03  核对范围"><div className="scope-review"><p><strong>全部数据行</strong> · 左表 {left.row_count} 行 / 右表 {right.row_count} 行</p><p><span>左表不参与比较的字段</span>{ignored('left')}</p><p><span>右表不参与比较的字段</span>{ignored('right')}</p><label className="checkbox-label"><input type="checkbox" checked={confirmedReview} disabled={!mappingValid || !!busy} onChange={e => setConfirmedReview(e.target.checked)} /><span>我已检查主键、比较类型及忽略字段，确认按以上范围核对。</span></label></div></Panel></div>
@@ -297,6 +378,7 @@ export default function App() {
           <div className="step-footer"><button className="text-button" disabled={!!busy} onClick={() => setStep(1)}>返回资料</button><div><button className="button secondary" disabled={!!busy} onClick={() => void perform('正在保存字段草稿', async () => { await ensureMapping(); setNotice('字段草稿已保存。'); })}>保存草稿</button><button className="button primary" disabled={!!busy || !mappingValid || !confirmedReview} onClick={() => void perform('正在执行核对', reconcile)}>确认并核对<Icon name="arrow" size={17} /></button></div></div>
         </>}
         {step === 3 && run && <><div className="result-banner"><span className="result-check"><Icon name={unresolved ? 'alert' : 'check'} size={23} /></span><div><h2>{run.summary?.decision === 'no_data' ? '没有可核对的数据行' : unresolved ? '核对已完成，部分记录需要处理' : '核对已完成'}</h2><p>{left?.filename} <span>↔</span> {right?.filename}</p></div><div className="result-meta">{date(run.created_at)}<small>记录 {run.id.slice(0, 8)}</small></div></div><div className="result-stats">{(['equal', 'changed', 'left_only', 'right_only'] as ResultStatus[]).map(status => <button key={status} onClick={() => setFilter(status)} className={filter === status ? 'selected' : ''}><span>{statusLabels[status]}</span><strong>{counts[status] || 0}<small>组</small></strong><i className={`dot-${status}`} /></button>)}<button onClick={() => setFilter('')}><span>待处理原始行</span><strong>{unresolved}<small>行</small></strong><i className="dot-unresolved" /></button></div>
+          {templateSaver()}
           <Panel title="逐组核对结果" aside={<span className="muted">{run.summary?.total_groups ?? '—'} 组 · 全部原始行参与</span>}><div className="result-toolbar"><div className="status-filters"><button className={!filter ? 'active' : ''} onClick={() => setFilter('')}>全部</button>{(Object.keys(statusLabels) as ResultStatus[]).map(status => <button key={status} className={filter === status ? 'active' : ''} onClick={() => setFilter(status)}>{statusLabels[status]}<span>{counts[status] || 0}</span></button>)}</div><label className="search-field"><Icon name="search" size={17} /><input value={query} onChange={e => setQuery(e.target.value)} placeholder="搜索当前页主键" aria-label="搜索当前页主键" /></label></div><div className="table-scroll"><table className="results-table" aria-busy={resultBusy}><thead><tr><th>主键</th><th>核对状态</th><th>左表原始行</th><th>右表原始行</th><th>比较详情</th><th /></tr></thead><tbody>{visibleResults.map(group => <tr key={group.id}><td className="key-cell">{group.key_text === '' ? '（空字符串）' : group.key_text ?? '∅'}</td><td><Badge status={group.status} /></td><td>{group.left_rows.length ? group.left_rows.slice(0, 5).join('、') + (group.left_rows.length > 5 ? ` … 共 ${group.left_rows.length} 行` : '') : <span className="muted">无对应行</span>}</td><td>{group.right_rows.length ? group.right_rows.slice(0, 5).join('、') + (group.right_rows.length > 5 ? ` … 共 ${group.right_rows.length} 行` : '') : <span className="muted">无对应行</span>}</td><td><span className="muted">{group.comparisons?.length || 0} 个字段{group.source_cell_issues?.length ? ` · ${group.source_cell_issue_count ?? group.source_cell_issues.length} 项异常` : ''}</span></td><td><button className="text-button" disabled={!!busy} onClick={() => void perform('正在读取原始来源', () => inspect(group))}>查看来源<Icon name="chevron" size={15} /></button></td></tr>)}</tbody></table></div>{!visibleResults.length && <div className="empty-result">{resultBusy ? '正在读取结果…' : query ? '当前页没有匹配该主键的记录。' : '该分类没有记录。'}</div>}<div className="pagination"><span>第 {pageNumber} 页 · 本页 {results.items.length} 组{query && ` · 搜索匹配 ${visibleResults.length} 组`}</span><div><button className="button small" disabled={resultBusy || pageNumber === 1} onClick={() => void fetchResults(run.id, filter)}>返回首页</button><button className="button small" disabled={resultBusy || !results.next_cursor} onClick={() => void fetchResults(run.id, filter, results.next_cursor!)}>下一页<Icon name="chevron" size={14} /></button></div></div></Panel><p className="format-note">“待处理原始行”包含重复主键、空主键、无效值以及单侧记录中的类型异常。它们不会计作已核对一致；界面筛选仅影响当前显示。</p><div className="step-footer"><button className="text-button" disabled={!!busy} onClick={() => { setStep(2); setConfirmedReview(false); setNotice('现在编辑的是当前字段草稿。已保存的历史核对结果保持不变。'); }}>调整字段，再次核对</button><span>结果与原始来源已保存至核对历史</span></div></>}
       </>}
       {activeOperations.length > 0 && !busy && !pending && <p className="inline-note">工作区有 {activeOperations.length} 个操作正在处理，可在核对历史中刷新状态。</p>}
