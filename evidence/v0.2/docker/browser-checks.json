@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "checked_at": "2026-11-13T11:23:05.836Z",
+  "origin": "http://127.0.0.1:8080",
+  "runtime": "GitHub Actions Linux Docker Compose (PostgreSQL, FastAPI, Nginx)",
+  "checks": [
+    "Malformed CSV shows an error and preserves usable upload controls",
+    "Real browser upload -> mapping confirmation -> computed results: 9 groups",
+    "Source drawer shows both exact large decimals and difference 0.01",
+    "Source drawer focus and Escape keyboard dismissal work",
+    "Changed status filter shows exactly two groups",
+    "Actual XLSX download saved",
+    "Refresh -> persistent history -> original results restored",
+    "Repeated export bytes identical after refresh",
+    "390px viewport has no page-level horizontal overflow"
+  ],
+  "export_sha256": "88dbee9753a2f5df087ace5dafa86dc8f1b30af4664abc4fbff143a5784b3516",
+  "page_errors": []
+}

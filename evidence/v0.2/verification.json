@@ -1,0 +1,46 @@
+{
+  "as_of": "2026-11-13",
+  "version": "0.2.0",
+  "delivery_status": "TEMPLATES_PORTABLE_AND_DOCKER_VERIFIED",
+  "automated_tests": {
+    "passed": 133,
+    "status": "PASS",
+    "runtime": "Linux with PostgreSQL 17.11",
+    "model_scope": "mock provider responses"
+  },
+  "ci": {
+    "url": "https://github.com/Gabriel6324/reconcile-desk/actions/runs/43416440954",
+    "tested_commit": "aef07a24156afb17d82762ce0813a78b5caef967",
+    "backend": "PASS",
+    "frontend_build": "PASS",
+    "docker": "PASS"
+  },
+  "docker": {
+    "build_start": "PASS",
+    "browser_flow": "PASS",
+    "template_workflow": "PASS",
+    "volume_recreate_history_sources_export": "PASS",
+    "new_template_run_after_recreate": "PASS"
+  },
+  "windows": {
+    "browser": "v0.2/browser-checks.json",
+    "templates": "v0.2/template-checks.json",
+    "upgrade": "v0.2/upgrade-check.json",
+    "restart": "v0.2/persistence-check.json",
+    "archive": "ReconcileDesk-v0.2.0-Windows-x64.zip",
+    "bytes": 77933408,
+    "sha256": "d516ab8a060e02ae42c0094c4bdc7e39464bc159c8abdf9195b1d15c0abced31"
+  },
+  "remaining": [
+    "Real model endpoint validation (user has no endpoint)",
+    "Independent clean Windows machine verification",
+    "Remaining original fault-injection cases; see acceptance-status.json"
+  ],
+  "scope_notes": [
+    "Template lookup matches exact header names, never positional column IDs.",
+    "Stored templates contain field names and rules, not source row values.",
+    "Template application always requires a new human confirmation.",
+    "Original v0.1 package and evidence are retained."
+  ],
+  "source_fingerprint": "9d6b4599bc2ff647ae22bd56f459a9688f6333c927e4b69a6d0bd84a19bb66c7"
+}

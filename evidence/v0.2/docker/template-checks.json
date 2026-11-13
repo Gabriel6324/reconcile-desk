@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "checked_at": "2026-11-13T11:23:14.569Z",
+  "origin": "http://127.0.0.1:8080",
+  "runtime": "GitHub Actions Linux Docker Compose (PostgreSQL, FastAPI, Nginx)",
+  "checks": [
+    "A confirmed historical result saves named templates, which survive page refresh",
+    "Templates match exact header names after column reordering and require a fresh human confirmation",
+    "Template controls fit a 390px mobile viewport without page-level horizontal overflow",
+    "Reusing the template produces the same nine semantic groups, exact 0.01 difference, and a downloadable XLSX",
+    "Missing headers produce an actionable message while preserving all current draft selections and review state",
+    "Template deletion supports keyboard cancellation and explicit confirmation without changing drafts or historical results"
+  ],
+  "retained_template_id": "0748df98-788a-4b60-b0c0-ac59e626d359",
+  "retained_template_name": "验收_订单金额_ddb0b951",
+  "original_run_id": "121cf840-3d27-477a-b88f-6b8053d0f774",
+  "reordered_run_id": "f23d4d02-7607-42d1-b67e-9140c76c7d64",
+  "reordered_left_import_id": "70064d3e-36e3-4bf5-bc7f-2a273a26b061",
+  "reordered_right_import_id": "dc874cff-5e6e-4b46-8578-9df060c924af",
+  "export_sha256": "7b48c2b7de92bbfb83b4b923e487da2d49a7808ea2c6a2e7657404580022ff97",
+  "page_errors": []
+}

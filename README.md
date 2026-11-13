@@ -4,13 +4,15 @@
 
 技术栈：React / TypeScript / FastAPI / PostgreSQL / SQLAlchemy / Alembic / Decimal / Docker Compose / Nginx。
 
+v0.2 新增可保存的字段模板、列重排复用与缺失字段提示，完善手机字段编辑和删除确认，并补齐完整 Docker Compose 交付与保留数据重建验收。
+
 ![核对结果与原始资料追溯](evidence/portable/results-desktop.png)
 
 ## 启动
 
-Windows 用户从 [v0.1.0 Release](https://github.com/Gabriel6324/reconcile-desk/releases/tag/v0.1.0) 下载 `ReconcileDesk-Windows.zip`，完整解压后双击包内的 `启动.cmd`，等待浏览器自动打开；用完双击 `停止.cmd`。运行包包含 Python、PostgreSQL、VC 运行库和构建后的网页，无需安装开发环境或 Docker。面向 Windows 10 / 11 x64，资料保存在包内 `data` 目录，搬移时先停止再移动整个文件夹。请保留启动窗口。
+Windows 用户从 [v0.2.0 Release](https://github.com/Gabriel6324/reconcile-desk/releases/tag/v0.2.0) 下载 `ReconcileDesk-v0.2.0-Windows-x64.zip`，完整解压后双击包内的 `启动.cmd`，等待浏览器自动打开；用完双击 `停止.cmd`。运行包包含 Python、PostgreSQL、VC 运行库和构建后的网页，无需安装开发环境或 Docker。面向 Windows 10 / 11 x64，资料保存在包内 `data` 目录，搬移时先停止再移动整个文件夹。请保留启动窗口。
 
-2026-11-13 已从最终 ZIP 的全新中文目录完成首次初始化、9 项浏览器流程检查、重复启动复用、正常停止及搬移后重开验证；核对历史和导出哈希保持一致。证据见 `evidence/portable/verification.json`。尚未在干净 Windows 虚拟机或其他电脑独立验收。真实模型接口仍未配置，完整手工映射流程可离线使用。
+从 v0.1 升级：先停止旧版并备份整个 `data` 文件夹，再把它复制到已解压的新版根目录。首次启动自动迁移数据库；旧版运行包可留作备份。不要同时启动使用同一份数据的新旧版本。尚未在干净 Windows 虚拟机或其他电脑独立验收；真实模型接口仍待接入，手工映射和模板流程可离线使用。
 
 ### 从源码运行
 
@@ -39,10 +41,13 @@ macOS / Linux 先执行 `sh scripts/init-env.sh`，然后使用同一条 Compose
 3. 比较「金额」↔「实付金额」，类型选择十进制数；可另加客户与状态的文本比较。
 4. 确认字段后执行，查看差异、重复主键、空主键和无效金额。点击结果查看原始行。
 5. 导出 XLSX，然后刷新页面，从历史记录打开同一结果。
+6. 在结果页输入名称并“保存为模板”；下次导入同类资料，在“确认字段”页选择并应用。列顺序变化时按完整表头名称对应；缺失列会明确提示，当前草稿保留。应用后须重新勾选人工确认。
 
 此样例仅比较金额时的预期：一致 2 组、差异 2 组、仅左 1 组、仅右 1 组、重复主键 1 组、无效值 1 组、空主键 1 组，左右合计 16 行。`9007199254740993.01` 与 `.02` 相差 `0.01`，计算不经浮点数。
 
 页面内置的示例文件另有明确标注，所有展示结果均由后端实际核对生成。
+
+模板保存在本机数据库中，最多 50 个。模板仅保存字段名称及比较规则，不保存原始行值；删除模板需确认，历史核对结果保持不变。
 
 ## 输入规则
 
@@ -63,17 +68,21 @@ macOS / Linux 先执行 `sh scripts/init-env.sh`，然后使用同一条 Compose
 
 ## 验证边界
 
-实际运行证据保存在 `evidence/verification.json`。2026-11-10 的 119 项自动化测试通过，包含 75 项核心测试、23 项模拟模型接口测试、19 项真实 PostgreSQL 集成与回归测试、2 项上传接收边界测试。浏览器的 9 项流程检查、实际 XLSX 下载语义检查及本机数据库恢复后的历史和导出哈希核验通过。
+实际运行证据保存在 `evidence/verification.json`，历史 v0.1 证据保留在 `evidence/portable`。新版在原有核心、模拟模型、PostgreSQL 集成和接收边界测试基础上，增加模板复用、缺失表头、并发同名、容量回滚、删除保护与旧库迁移检查。
 
-本机未安装 Docker，因此镜像构建、容器完整流程与保留卷重建验证仍待执行。原计划中其余故障注入场景逐项记录在 `evidence/acceptance-status.json`，完整发布验收保持待完成状态。
+2026-11-13 [对应提交的 CI 验收](https://github.com/Gabriel6324/reconcile-desk/actions/runs/43416440954)通过 133 项后端测试、前端构建及完整 Docker 流程。最终 Windows ZIP 通过 9 项基础浏览器检查和 6 项模板流程检查；旧版数据库升级与正常重启后，历史及导出保持一致，模板可继续用于新核对。详见 `evidence/v0.2`。
+
+Docker 验收在 GitHub Actions 的隔离环境构建真实镜像，经过 Nginx 执行浏览器流程，并保留数据卷重建 PostgreSQL、API 和网页容器。它比较历史、原始资料与导出文件，随后用保存的模板执行新的核对。原计划中其余故障注入场景逐项记录在 `evidence/acceptance-status.json`，完整原始故障矩阵仍有待执行项。
 
 本地开发使用 Python 3.12、Node.js 22.12+ 和 PostgreSQL 17。安装 `backend/requirements.txt`，设置 `DATABASE_URL`，在 backend 下执行 `python -m uvicorn api.main:app --host 127.0.0.1 --port 8000`。在 frontend 下执行 `npm ci` 与 `npm run dev`。
 
 在 backend 下执行 `python -m pytest tests/core tests/api/test_model.py -q` 可检查核心与模拟模型接口。完整测试先设置 `TEST_DATABASE_URL`，数据库名必须为 `reconcile_test`，再执行 `python -m pytest tests -q`。集成测试会重建这个专用测试库的 public schema。
 
-验收结果以 `evidence/verification.json` 为准。`python scripts/verify-evidence.py` 检查交付代码是否仍与验收指纹一致，修改后需要重新验证。[GitHub Actions 远端检查](https://github.com/Gabriel6324/reconcile-desk/actions/runs/43281908204)已通过：Linux / PostgreSQL 17.11 环境中 119 项后端测试及前端构建全部成功。这不等同于应用完整 Docker Compose 流程或真实模型验收。
+验收结果与对应 CI 提交记录以 `evidence/verification.json` 为准。`python scripts/verify-evidence.py` 检查交付代码是否仍与验收指纹一致，修改后需要重新验证。[GitHub Actions](https://github.com/Gabriel6324/reconcile-desk/actions)分别执行后端测试、前端构建和完整 Docker 交付流程。模拟模型接口测试仍不代表真实模型验收。
 
 浏览器复测脚本为 `scripts/browser-smoke.cjs`，需要安装 Playwright，并设置 `BROWSER_EXECUTABLE` 指向可用的 Chromium / Edge。服务启动后执行 `node scripts/browser-smoke.cjs`，脚本会上传标注样例、生成新记录并核验实际下载。可用 `PLAYWRIGHT_MODULE` 指向已有的 Playwright 模块目录。
+
+模板流程复测使用 `node scripts/browser-templates.cjs`；它会创建明确标记的验收资料与模板，并检查列重排、再次确认、缺失字段、删除确认及手机布局。容器保留数据重建前后分别执行 `python scripts/check-persistence.py capture --require-template` 和 `verify --require-template`；只应在专用验收工作区运行这些会写入示例数据的脚本。
 
 项目用于有明确边界的本地核对展示；当前版本不提供多人权限、模糊匹配、财务记账或聚合对账。
 

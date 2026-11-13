@@ -1,89 +1,46 @@
 {
   "as_of": "2026-11-13",
-  "delivery_status": "WINDOWS_PORTABLE_VERIFIED_FULL_AI_DOCKER_RELEASE_PENDING",
-  "windows_portable": {
-    "status": "PASS",
-    "artifact": "portable/verification.json",
-    "archive": "ReconcileDesk-Windows.zip",
-    "sha256": "6c1357fa7ffd89ad057960e911176f1941353097050520141536c936c92c50dc"
-  },
-  "runtime": {
-    "os": "Windows",
-    "python": "3.12.14",
-    "node": "22.20.0",
-    "postgresql": "17.11",
-    "frontend": "Vite 7.3.7"
-  },
+  "version": "0.2.0",
+  "delivery_status": "TEMPLATES_PORTABLE_AND_DOCKER_VERIFIED",
   "automated_tests": {
+    "passed": 133,
     "status": "PASS",
-    "passed": 119,
-    "failures": 0,
-    "skipped": 0,
-    "by_module": {
-      "test_boundaries": 2,
-      "test_model": 23,
-      "test_postgres": 15,
-      "test_recovery_export": 4,
-      "test_core": 75
-    },
-    "artifact": "pytest-final.xml",
-    "model_scope": "mock HTTP responses; no real provider request"
+    "runtime": "Linux with PostgreSQL 17.11",
+    "model_scope": "mock provider responses"
   },
-  "frontend_build": {
-    "status": "PASS",
-    "command": "npm run build",
-    "assets": [
-      "index-Cb94KUVJ.css",
-      "index-pZk_nB-m.js"
-    ]
+  "ci": {
+    "url": "https://github.com/Gabriel6324/reconcile-desk/actions/runs/43416440954",
+    "tested_commit": "aef07a24156afb17d82762ce0813a78b5caef967",
+    "backend": "PASS",
+    "frontend_build": "PASS",
+    "docker": "PASS"
   },
-  "browser": {
-    "status": "PASS",
-    "artifact": "browser-checks.json",
-    "steps": 9,
-    "coverage": "real uploads, manual mapping, deterministic results, source drawer, filters, downloaded XLSX, refresh/history, repeated export hash, keyboard, narrow viewport, malformed input"
+  "docker": {
+    "build_start": "PASS",
+    "browser_flow": "PASS",
+    "template_workflow": "PASS",
+    "volume_recreate_history_sources_export": "PASS",
+    "new_template_run_after_recreate": "PASS"
   },
-  "export_semantics": {
-    "status": "PASS",
-    "artifact": "export-checks.json"
-  },
-  "native_restart": {
-    "status": "PASS",
-    "artifact": "native-restart.json"
-  },
-  "configuration": {
-    "docker_files": "PRESENT_STATIC_REVIEWED",
-    "docker_build": "NOT_RUN",
-    "compose_config": "NOT_RUN",
-    "compose_recreate": "NOT_RUN",
-    "ci_workflow": "PASS_GITHUB_ACTIONS",
-    "ci_run_url": "https://github.com/Gabriel6324/reconcile-desk/actions/runs/43281908204",
-    "ci_tested_commit": "5ddd212553ff64760c9ff8c81d76e5d92c5677f3",
-    "ci_backend_passed": 119
+  "windows": {
+    "browser": "v0.2/browser-checks.json",
+    "templates": "v0.2/template-checks.json",
+    "upgrade": "v0.2/upgrade-check.json",
+    "restart": "v0.2/persistence-check.json",
+    "archive": "ReconcileDesk-v0.2.0-Windows-x64.zip",
+    "bytes": 77933408,
+    "sha256": "d516ab8a060e02ae42c0094c4bdc7e39464bc159c8abdf9195b1d15c0abced31"
   },
   "remaining": [
-    {
-      "item": "真实模型验收",
-      "status": "BLOCKED",
-      "reason": "用户确认暂无可用接口，要求先完成其余功能"
-    },
-    {
-      "item": "Docker 镜像构建、容器内完整流程及保留卷重建",
-      "status": "BLOCKED",
-      "reason": "本机尚未安装 Docker / WSL"
-    },
-    {
-      "item": "计划中的全部故障注入场景",
-      "status": "NOT_RUN",
-      "reason": "现有测试覆盖常规恢复、并发、幂等和部分异常；完整矩阵逐项状态见 acceptance-status.json"
-    }
+    "Real model endpoint validation (user has no endpoint)",
+    "Independent clean Windows machine verification",
+    "Remaining original fault-injection cases; see acceptance-status.json"
   ],
   "scope_notes": [
-    "本地演示版本可完成两份表格的导入、手工映射、精确核对、来源追溯、导出和历史恢复。",
-    "未把模拟模型测试计为真实模型验收。",
-    "未把 native PostgreSQL 恢复计为 Docker 重建验收。",
-    "计划的 58 个验收场景与自动化测试函数数量分别统计。",
-    "当前 HTTP types 由前后端对齐并通过完整流程验证，尚未生成共享 OpenAPI 类型。"
+    "Template lookup matches exact header names, never positional column IDs.",
+    "Stored templates contain field names and rules, not source row values.",
+    "Template application always requires a new human confirmation.",
+    "Original v0.1 package and evidence are retained."
   ],
-  "source_fingerprint": "7be0de21d27de27236e2eee85b669f1f0ab8b6ee8d24aee797b415baf9f10ed9"
+  "source_fingerprint": "9d6b4599bc2ff647ae22bd56f459a9688f6333c927e4b69a6d0bd84a19bb66c7"
 }

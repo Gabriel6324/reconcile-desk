@@ -282,13 +282,13 @@
       "id": "T24",
       "case": "compose_recreate_without_volume_deletion",
       "expect": "same_sources_history_results_and_export_hashes",
-      "status": "BLOCKED",
+      "status": "PASS",
       "required_for_v1": true,
       "gates": [
         "G6"
       ],
       "runtime_evidence_required": true,
-      "implementation_evidence": "Real model endpoint or Docker runtime unavailable."
+      "implementation_evidence": "https://github.com/Gabriel6324/reconcile-desk/actions/runs/43416440954; Docker Compose down/up preserving volume, identical historical result/source/XLSX hashes and new computation."
     },
     {
       "id": "T25",
@@ -490,13 +490,13 @@
       "id": "T41",
       "case": "proxy_upload_and_memory_limits",
       "expect": "1MiB以上合法文件成功；超过10MiB失败；chunked上传/zip实际膨胀/共享字符串均有界",
-      "status": "BLOCKED",
+      "status": "NOT_RUN",
       "required_for_v1": true,
       "gates": [
         "G5"
       ],
       "runtime_evidence_required": true,
-      "implementation_evidence": "Real model endpoint or Docker runtime unavailable."
+      "implementation_evidence": "Docker proxy workflow passed; full planned upload/memory stress scenario remains pending."
     },
     {
       "id": "T42",

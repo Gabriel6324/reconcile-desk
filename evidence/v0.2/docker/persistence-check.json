@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "run_id": "f23d4d02-7607-42d1-b67e-9140c76c7d64",
+  "export_sha256": "7b48c2b7de92bbfb83b4b923e487da2d49a7808ea2c6a2e7657404580022ff97",
+  "template_restored_and_used_for_new_run": true,
+  "checks": [
+    "Persisted run and result groups unchanged",
+    "Original files unchanged",
+    "Downloaded XLSX bytes unchanged",
+    "API healthy after database/API/web recreation"
+  ]
+}

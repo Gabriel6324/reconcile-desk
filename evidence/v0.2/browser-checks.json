@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "checked_at": "2026-11-13T11:24:39.180Z",
+  "origin": "http://127.0.0.1:8080",
+  "runtime": "Final v0.2.0 Windows ZIP, fresh Chinese path, bundled Python/PostgreSQL",
+  "checks": [
+    "Malformed CSV shows an error and preserves usable upload controls",
+    "Real browser upload -> mapping confirmation -> computed results: 9 groups",
+    "Source drawer shows both exact large decimals and difference 0.01",
+    "Source drawer focus and Escape keyboard dismissal work",
+    "Changed status filter shows exactly two groups",
+    "Actual XLSX download saved",
+    "Refresh -> persistent history -> original results restored",
+    "Repeated export bytes identical after refresh",
+    "390px viewport has no page-level horizontal overflow"
+  ],
+  "export_sha256": "c0c71cc976419bf6e70df1c77611d9932399c187428f82082c47f02655e7843a",
+  "page_errors": []
+}
