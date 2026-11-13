@@ -293,7 +293,7 @@ export default function App() {
       <div className="template-content">
         <p className="template-description">常用表格不必重复选字段。模板按表头名称对应，列的位置变化也可以复用。</p>
         {templates.length ? <>
-          <div className="template-controls"><label className="template-field" htmlFor="mapping-template"><span>已保存的字段模板</span><select id="mapping-template" value={templateId} disabled={!!busy} onChange={event => { setTemplateId(event.target.value); setTemplateToDelete(null); }}><option value="">选择模板…</option>{templates.map(item => <option value={item.id} key={item.id}>{item.name} · {item.comparison_count} 组字段</option>)}</select></label>
+          <div className="template-controls"><label className="template-field" htmlFor="mapping-template"><span>已保存的字段模板</span><select id="mapping-template" aria-label="已保存的字段模板" value={templateId} disabled={!!busy} onChange={event => { setTemplateId(event.target.value); setTemplateToDelete(null); }}><option value="">选择模板…</option>{templates.map(item => <option value={item.id} key={item.id}>{item.name} · {item.comparison_count} 组字段</option>)}</select></label>
             <button className="button secondary" disabled={!!busy || !selectedTemplate || !!templateToDelete} onClick={() => void perform('正在匹配模板字段', applyTemplate)}><Icon name="link" size={16} />应用模板</button>
             <button ref={templateDeleteButton} className="text-button template-delete-button" disabled={!!busy || !selectedTemplate || !!templateToDelete} onClick={() => setTemplateToDelete(selectedTemplate || null)}><Icon name="trash" size={15} />删除模板</button>
           </div>
@@ -307,7 +307,7 @@ export default function App() {
     return <Panel title="保存本次字段规则" className="template-panel template-save-panel" aside={<span className="muted">字段模板 · {templates.length} / 50</span>}>
       <div className="template-content"><p className="template-description">把已确认的主键、字段对应和比较方式存为模板，下次核对同类表格时直接复用。模板不保存单元格内容。</p>
         <form className="template-controls" onSubmit={event => { event.preventDefault(); if (!busy && canSaveTemplate && templateName.trim() && templates.length < 50) void perform('正在保存字段模板', saveTemplate); }}>
-          <label className="template-field" htmlFor="template-name"><span>模板名称</span><input id="template-name" value={templateName} maxLength={80} placeholder="例如：订单与收款金额核对" autoComplete="off" disabled={!!busy || !canSaveTemplate || templates.length >= 50} onChange={event => setTemplateName(event.target.value)} /></label>
+          <label className="template-field" htmlFor="template-name"><span>模板名称</span><input id="template-name" aria-label="模板名称" value={templateName} maxLength={80} placeholder="例如：订单与收款金额核对" autoComplete="off" disabled={!!busy || !canSaveTemplate || templates.length >= 50} onChange={event => setTemplateName(event.target.value)} /></label>
           <button className="button secondary" type="submit" disabled={!!busy || !canSaveTemplate || !templateName.trim() || templates.length >= 50}><Icon name="plus" size={16} />保存为模板</button>
         </form>
         {!canSaveTemplate && <p className="template-hint">这份历史结果的字段映射已调整。请重新核对后，再保存对应的模板。</p>}
