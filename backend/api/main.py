@@ -40,7 +40,7 @@ async def lifespan(app):
         engine.dispose()
 
 
-app = FastAPI(title='对齐 · Reconcile Desk', version='0.1.0', lifespan=lifespan)
+app = FastAPI(title='对齐 · Reconcile Desk', version='0.2.0', lifespan=lifespan)
 
 
 class Boundary:

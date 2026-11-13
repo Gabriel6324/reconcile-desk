@@ -63,13 +63,15 @@ jobs:
         run: docker compose up -d --build --wait --wait-timeout 180
       - name: Browser uploads, comparison, provenance and XLSX export
         run: node scripts/browser-smoke.cjs
+      - name: Save and reuse templates with reordered columns and missing fields
+        run: node scripts/browser-templates.cjs
       - name: Capture persisted history and original files
-        run: python scripts/check-persistence.py capture
+        run: python scripts/check-persistence.py capture --require-template
       - name: Recreate all containers with the existing volume
         run: |
           docker compose down --timeout 35
           docker compose up -d --wait --wait-timeout 180
-          python scripts/check-persistence.py verify
+          python scripts/check-persistence.py verify --require-template
       - name: Collect service logs
         if: always()
         run: |
