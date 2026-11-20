@@ -32,6 +32,11 @@ class Runner:
         self.threads = []
 
     def startup(self):
+        # Team databases use a separate authenticated API and explicit migrations.
+        # Never allow the legacy unauthenticated process to write a migrated database.
+        with self.engine.connect() as check:
+            if check.scalar(text("SELECT to_regclass('public.team_users')")) is not None:
+                raise RuntimeError('This database requires the team API; legacy executor is disabled')
         self.lease = self.engine.connect().execution_options(isolation_level='AUTOCOMMIT')
         if not self.lease.scalar(text('SELECT pg_try_advisory_lock(:lock)'), {'lock': LOCK}):
             self.lease.close()
@@ -41,7 +46,7 @@ class Runner:
         cfg.set_main_option('script_location', str(Path(__file__).resolve().parents[1] / 'alembic'))
         with self.engine.begin() as conn:
             cfg.attributes['connection'] = conn
-            command.upgrade(cfg, 'head')
+            command.upgrade(cfg, '0002')
         with self.Session.begin() as s:
             executor = s.get(Executor, 1, with_for_update=True)
             if executor is None:

@@ -10,3 +10,13 @@
 runtime
 evidence
 test-results
+
+backups
+restore-input
+data
+pgdata
+work
+**/*.dump
+**/*.xml
+**/*.tsbuildinfo
+**/*private*.json

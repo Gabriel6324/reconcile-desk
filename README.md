@@ -1,89 +1,85 @@
 # 对齐 · Reconcile Desk
 
-导入两份表格，明确主键和比较规则，逐行核对并查看来源，导出可追溯的 XLSX。面向单人、本机运行的资料核对工作台。
+当前源码为 `0.3.0` 本机收款核对工作台：从 CSV/XLSX 导入、字段规则确认和业务周期，到后台核对、差异处置、独立复核、周期关闭及不可变 XLSX 报告。支持多账号和工作区，本机版本只接受本机访问。
 
-技术栈：React / TypeScript / FastAPI / PostgreSQL / SQLAlchemy / Alembic / Decimal / Docker Compose / Nginx。
+本轮交付范围是收款业务闭环。完整生产化设计中的退款、结算、连接器、组织部署和业务试点仍属后续扩展。资料范围由使用者明确声明，系统按所选文件全量计算，不自动按周期日期筛选。详细接口和边界见 [团队开发记录](docs/team-development.md)。
 
-v0.2 新增可保存的字段模板、列重排复用与缺失字段提示，完善手机字段编辑和删除确认，并补齐完整 Docker Compose 交付与保留数据重建验收。
+技术栈：React / TypeScript / FastAPI / PostgreSQL / SQLAlchemy / Alembic / Decimal。Docker Compose / Nginx 的现有运行证据属于 v0.2；新服务的容器部署仍待验收。
 
-![核对结果与原始资料追溯](evidence/v0.2/results-desktop.png)
+## Windows 本机运行
 
-## 启动
+从 [v0.3.0 Release](https://github.com/Gabriel6324/reconcile-desk/releases/tag/v0.3.0) 下载 `ReconcileDesk-v0.3.0-Windows-x64.zip`。完整解压后双击 `启动.cmd`，等待浏览器打开，首次自行创建管理员账号。用完双击 `停止.cmd`。运行包包含 Python、PostgreSQL、运行库和网页，无需另装开发环境或 Docker；使用期间请保留启动窗口。
 
-Windows 用户从 [v0.2.0 Release](https://github.com/Gabriel6324/reconcile-desk/releases/tag/v0.2.0) 下载 `ReconcileDesk-v0.2.0-Windows-x64.zip`，完整解压后双击包内的 `启动.cmd`，等待浏览器自动打开；用完双击 `停止.cmd`。运行包包含 Python、PostgreSQL、VC 运行库和构建后的网页，无需安装开发环境或 Docker。面向 Windows 10 / 11 x64，资料保存在包内 `data` 目录，搬移时先停止再移动整个文件夹。请保留启动窗口。
+资料保存在解压目录的 `data` 中。移动时先停止，再移动整个文件夹。`备份.cmd` 创建数据库备份；`恢复备份.cmd` 在旁边建立独立恢复副本，恢复的登录会话失效，自动执行先暂停，须在本机明确确认后恢复。v0.3 不自动接管 v0.2 的数据目录，也不覆盖旧版运行包。
 
-从 v0.1 升级：先停止旧版并备份整个 `data` 文件夹，再把它复制到已解压的新版根目录。首次启动自动迁移数据库；旧版运行包可留作备份。不要同时启动使用同一份数据的新旧版本。尚未在干净 Windows 虚拟机或其他电脑独立验收；真实模型接口仍待接入，手工映射和模板流程可离线使用。
+已通过 558 项后端测试、双账号浏览器全流程、跨页冻结证据、本机解压启动、中文 CMD 入口、重启保留及备份恢复检查。最终验收结论与文件哈希见 [`evidence/verification.json`](evidence/verification.json)。尚未完成其他电脑或干净 Windows 虚拟机的独立验收。
 
-### 从源码运行
+2026-11-17 修正版已补上会话过期处理、原文异步竞态保护、完整报告分页和恢复中断保护。详见 [修复记录](docs/bugfix-2026-11-17.md)。
 
-```bash
-git clone https://github.com/Gabriel6324/reconcile-desk.git
-cd reconcile-desk
-```
+## 收款流程
 
-安装并启动 Docker Desktop（Windows 使用 Linux containers）。在项目目录执行：
+1. 在“成员与权限”创建另一个账号并授予本工作区“复核员”角色。管理员可以兼具操作和复核角色，但同一处置必须由不同账号提交与复核。
+2. 在“资料库”导入订单与收款文件，等待解析就绪。页面提供标注为合成示例的 `orders.csv` 和 `payments.csv`。
+3. 在“规则配置”分别确认业务键、金额、事件编号、币种与来源名称，选择 1:1、1:N 或 N:1 及金额容差；发布规则并保存可复用配置。
+4. 新建业务周期，明确日期、时区及截止时间；选择配置和本期两份资料，填写完整性声明，保存版本并确认。
+5. 运行核对，任务完成后明确启用结果。更新输入会产生新版本，历史结果与处置保留，新结果不会自动继承旧审批。
+6. 操作员认领差异案件，选取来源证据并提交说明；另一账号查看冻结证据后复核通过或退回。容差内差异也须处置，仍需外部跟进的案件不能批准关闭。
+7. 两侧资料均声明完整、当前全部案件完成独立复核后，复核员填写说明并关闭周期。生成并下载 XLSX 报告；周期或案件重开后，旧报告字节保持不变。
+
+示例使用字段 `order`（业务键）、`event`（事件编号）、`amount`（金额），币种为 CNY；选择 1:N、容差 0。三笔订单合计 450.00，三笔收款合计 360.00：一组精确一致、一组金额差异、一组仅订单，共两项需处置的差异。示例用于验证流程，不代表真实业务验收。
+
+## 数据与证据边界
+
+- 每文件最多 10 MiB、10,000 数据行、50 列，每单元格最多 4,000 字符。CSV 使用 UTF-8（可带 BOM）、逗号分隔、首行表头。
+- XLSX 多个可见工作表须明确选择一个；每个数据集只包含一个文件的一个工作表。保留整个工作簿的公式、外部链接、隐藏数据及压缩包安全检查。
+- 规则按完整表头名称绑定，保留原文件、来源行、输入哈希和配置版本。金额使用 Decimal；无效或缺失金额作为异常保留，不自动当零，不做币种换算。
+- 技术覆盖率只说明已导入记录参与计算，资料完整性声明只记录使用者核实的范围，两者均不替代实际业务核实。
+- 复核证据显示提交时引用的原始记录、文件与来源行；跨页引用会继续定位，读取失败明确提示。处理记录支持分页查看完整历史。
+- 报告冻结周期快照、结果分组和独立复核记录；金额与标识按文本写入，禁用公式和自动链接解释。原始文件仍在资料库中单独保留。
+- 本机收款版本尚无自动日期筛选、多文件合并、退款/结算、财务记账、定时连接器及真实业务试点。
+
+## 从源码运行 v0.3
+
+开发环境使用 Python 3.12、Node.js 22.12+ 和 PostgreSQL 17。准备独立开发数据库，私下配置 `DATABASE_URL`；不要把账号密码提交到仓库。安装 `backend/requirements.txt` 后，在 `frontend` 目录执行：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/init-env.ps1
-docker compose up -d --build
+npm ci
+npm run build
 ```
 
-macOS / Linux 先执行 `sh scripts/init-env.sh`，然后使用同一条 Compose 命令。
+在 `backend` 目录执行迁移并启动本机服务：
 
-打开 <http://127.0.0.1:8080>。数据库仅在容器网络中使用，网页仅绑定本机。首次启动会自动迁移数据库；健康检查通过后网页才启动。
+```powershell
+python -m team.cli migrate
+python -m uvicorn team.local:app --host 127.0.0.1 --port 8080
+```
 
-停止：`docker compose stop`。更新代码后：`docker compose up -d --build`。数据保存在 `reconcile_data` 命名卷；保留该卷即可保留历史。不要使用 `docker compose down -v`，它会删除数据库卷。
+另开终端，在相同 `backend` 目录及相同私有数据库配置下运行：
 
-## 演示流程
+```powershell
+python -m team.worker
+```
 
-1. 新建核对，选择项目 `samples/left-orders.csv` 和 `samples/right-payments.csv`。
-2. 主键选择「订单编号」↔「业务单号」，保持精确匹配。
-3. 比较「金额」↔「实付金额」，类型选择十进制数；可另加客户与状态的文本比较。
-4. 确认字段后执行，查看差异、重复主键、空主键和无效金额。点击结果查看原始行。
-5. 导出 XLSX，然后刷新页面，从历史记录打开同一结果。
-6. 在结果页输入名称并“保存为模板”；下次导入同类资料，在“确认字段”页选择并应用。列顺序变化时按完整表头名称对应；缺失列会明确提示，当前草稿保留。应用后须重新勾选人工确认。
+打开 <http://127.0.0.1:8080> 创建首个管理员。源码启动需要分别保持 API 和工作进程运行；便携包会负责这些进程。HTTPS 组织部署的 `team.app` 配置及本机账号恢复命令见 [开发记录](docs/team-development.md)。现有 Compose 文件与旧启动脚本不能视为 v0.3 已验收的部署入口。
 
-此样例仅比较金额时的预期：一致 2 组、差异 2 组、仅左 1 组、仅右 1 组、重复主键 1 组、无效值 1 组、空主键 1 组，左右合计 16 行。`9007199254740993.01` 与 `.02` 相差 `0.01`，计算不经浮点数。
+## 验证状态
 
-页面内置的示例文件另有明确标注，所有展示结果均由后端实际核对生成。
+本机私有验收记录：558 项后端测试通过，7 项浏览器故障回归通过；另完成正常双账号业务流程、中文 CMD 启停、重启保留和备份恢复。公开版只保留脱敏摘要；原始日志、JUnit 主机信息、截图和导出文件不随仓库发布。公开整理后的复核结果见 `evidence/verification.json`。
 
-模板保存在本机数据库中，最多 50 个。模板仅保存字段名称及比较规则，不保存原始行值；删除模板需确认，历史核对结果保持不变。
+完整后端回归在 `backend` 下执行：
 
-## 输入规则
+```powershell
+python -m pytest tests -q
+```
 
-- CSV：UTF-8（可带 BOM）、逗号分隔、首行表头。XLSX：单工作表、首行表头。
-- 每文件最多 10 MiB、10,000 数据行、50 列；每单元格最多 4,000 字符。解析后的文本与压缩包展开体积另有限制。
-- 表头不能重复或为空；公式、多表、外部引用、合并数据单元格、非法控制字符等返回明确错误。
-- 主键必须来自文本值；重复和空主键单独列出，避免错误配对。
-- 文本默认逐字比较。可显式选择仅裁剪 ASCII 空白。金额选择 Decimal；无效或缺失数值保留为待核查，绝不自动当零。
-- 导出包含全部结果和来源；页面筛选不改变导出范围。文本按字面写入，不作为公式或自动超链接执行。
+先设置 `TEST_DATABASE_URL`，数据库名必须为 `reconcile_test`。部分集成测试会重建专用测试库的 public schema，不能使用业务数据库。
 
-## 可选模型配置
+真实模型接口、v0.3 Linux/Docker 部署、完整故障与容量矩阵、干净 Windows 环境和真实业务试点仍待验证。当前收款流程使用显式字段映射和确定性计算，不需要模型密钥；旧版模拟模型测试不证明真实接口可用，也不代表 v0.3 已接入模型建议。
 
-未配置模型时，手动映射与核对流程可以独立使用。若有 OpenAI 兼容接口，在本机 `.env` 设置 `LLM_BASE_URL`（以 `/v1` 结尾）、`LLM_MODEL` 和 `LLM_API_KEY`，重建 API 服务。
+## 公开发布范围
 
-模型请求由用户主动触发，提供字段建议，须明确应用并复核。原始资料中的指令只作为数据。核对结果由确定性代码计算。模型密钥只留在后端运行环境，勿写入前端或提交 `.env`。
+本次发布来自独立整理的公开源码快照，源码 ZIP 不携带 `.git`；GitHub 仓库保留原有提交历史。当前版本保留源代码、测试、迁移、合成样例、依赖锁定及脱敏验证摘要；不包含运行数据、账号、数据库、备份、会话、密钥、原始日志、截图、导出表格或开发机路径。首次启动创建自己的账号。
 
-当前用户暂无接口，真实模型响应、计费和最终容器内模型连通性待验收。模拟接口检查不代表真实模型验收。
+现有 Compose 与旧 browser-smoke/browser-templates 脚本属于 v0.2，不能用于证明 v0.3 已完成容器验收。默认 CI 运行后端测试和前端构建；v0.3 Docker 部署验证仍待补齐。历史版可通过公开仓库的 Releases 查阅。
 
-## 验证边界
-
-实际运行证据保存在 `evidence/verification.json`，历史 v0.1 证据保留在 `evidence/portable`。新版在原有核心、模拟模型、PostgreSQL 集成和接收边界测试基础上，增加模板复用、缺失表头、并发同名、容量回滚、删除保护与旧库迁移检查。
-
-2026-11-13 [对应提交的 CI 验收](https://github.com/Gabriel6324/reconcile-desk/actions/runs/43417463630)通过 134 项后端测试、前端构建及完整 Docker 流程。最终 Windows ZIP 通过 9 项基础浏览器检查和 6 项模板流程检查；旧版数据库升级与正常重启后，历史及导出保持一致，模板可继续用于新核对。详见 `evidence/v0.2`。
-
-Docker 验收在 GitHub Actions 的隔离环境构建真实镜像，经过 Nginx 执行浏览器流程，并保留数据卷重建 PostgreSQL、API 和网页容器。它比较历史、原始资料与导出文件，随后用保存的模板执行新的核对。原计划中其余故障注入场景逐项记录在 `evidence/acceptance-status.json`，完整原始故障矩阵仍有待执行项。
-
-本地开发使用 Python 3.12、Node.js 22.12+ 和 PostgreSQL 17。安装 `backend/requirements.txt`，设置 `DATABASE_URL`，在 backend 下执行 `python -m uvicorn api.main:app --host 127.0.0.1 --port 8000`。在 frontend 下执行 `npm ci` 与 `npm run dev`。
-
-在 backend 下执行 `python -m pytest tests/core tests/api/test_model.py -q` 可检查核心与模拟模型接口。完整测试先设置 `TEST_DATABASE_URL`，数据库名必须为 `reconcile_test`，再执行 `python -m pytest tests -q`。集成测试会重建这个专用测试库的 public schema。
-
-验收结果与对应 CI 提交记录以 `evidence/verification.json` 为准。`python scripts/verify-evidence.py` 检查交付代码是否仍与验收指纹一致，修改后需要重新验证。[GitHub Actions](https://github.com/Gabriel6324/reconcile-desk/actions)分别执行后端测试、前端构建和完整 Docker 交付流程。模拟模型接口测试仍不代表真实模型验收。
-
-浏览器复测脚本为 `scripts/browser-smoke.cjs`，需要安装 Playwright，并设置 `BROWSER_EXECUTABLE` 指向可用的 Chromium / Edge。服务启动后执行 `node scripts/browser-smoke.cjs`，脚本会上传标注样例、生成新记录并核验实际下载。可用 `PLAYWRIGHT_MODULE` 指向已有的 Playwright 模块目录。
-
-模板流程复测使用 `node scripts/browser-templates.cjs`；它会创建明确标记的验收资料与模板，并检查列重排、再次确认、缺失字段、删除确认及手机布局。容器保留数据重建前后分别执行 `python scripts/check-persistence.py capture --require-template` 和 `verify --require-template`；只应在专用验收工作区运行这些会写入示例数据的脚本。
-
-项目用于有明确边界的本地核对展示；当前版本不提供多人权限、模糊匹配、财务记账或聚合对账。
-
-`Start-Local.ps1` 是原开发工作区专用入口，依赖同一工作区的 `work/runtime`。下载仓库的用户请使用上面的运行包或源码运行步骤。
+详细清理范围见 [公开版本说明](PUBLICATION.md)。`.env.example` 只有空配置/占位值；测试中的固定密码仅用于一次性测试数据库，不能用于实际部署。

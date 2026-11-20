@@ -156,7 +156,7 @@ function reorderedSample(filename, order) {
     mark('Reusing the template produces the same nine semantic groups, exact 0.01 difference, and a downloadable XLSX');
 
     // Missing-column failures must preserve the user's existing editable draft.
-    const missing = { name: `验收_缺失金额列_${suffix}.csv`, mimeType: 'text/csv', buffer: Buffer.from('订单编号,客户\nORD-001,林溪\n') };
+    const missing = { name: `验收_缺失金额列_${suffix}.csv`, mimeType: 'text/csv', buffer: Buffer.from('订单编号,客户\nORD-001,示例客户001\n') };
     await uploadUiPair(missing, rightReordered);
     await page.getByLabel('左表主键', { exact: true }).selectOption('c1');
     await page.getByLabel('右表主键', { exact: true }).selectOption('c4');

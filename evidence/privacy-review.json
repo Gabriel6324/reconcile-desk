@@ -1,0 +1,18 @@
+{
+  "status": "PASS_FOR_CURRENT_EXPORT",
+  "scope": "New source snapshot and clean Windows ZIP only",
+  "private_data_excluded": [
+    "Git history",
+    "runtime databases and accounts",
+    "backups and restore inputs",
+    "private configuration and API credentials",
+    "raw logs and JUnit XML",
+    "screenshots and spreadsheet exports",
+    "personal absolute paths",
+    "machine identifiers and dynamic test record IDs"
+  ],
+  "sample_data": "synthetic numbered records; test-only credentials are not deployment credentials",
+  "runtime_certificates": "public trust material only; no private keys; existing rejection policy retained",
+  "remote_history": "Previously published evidence remains in old commits; this export does not rewrite or remove remote history",
+  "export_created_before_upload": true
+}
